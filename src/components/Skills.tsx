@@ -121,11 +121,14 @@ export default function Skills() {
                                 >
                                     <div className="w-16 h-16 md:w-20 md:h-20 bg-white/5 border border-white/10 rounded-xl flex items-center justify-center cursor-pointer transition-all duration-300 group-hover:bg-white/10 group-hover:border-accent-NEON_GREEN/50 group-hover:shadow-[0_0_20px_rgba(0,255,65,0.15)] backdrop-blur-sm">
                                         {typeof tech.icon === 'string' ? (
-                                            <img
-                                                src={tech.icon}
-                                                alt={tech.name}
-                                                className="w-8 h-8 md:w-10 md:h-10 object-contain opacity-60 group-hover:opacity-100 transition-all duration-300 grayscale group-hover:grayscale-0"
-                                            />
+                                            <>
+                                                {/* eslint-disable-next-line @next/next/no-img-element */}
+                                                <img
+                                                    src={tech.icon}
+                                                    alt={tech.name}
+                                                    className="w-8 h-8 md:w-10 md:h-10 object-contain opacity-60 group-hover:opacity-100 transition-all duration-300 grayscale group-hover:grayscale-0"
+                                                />
+                                            </>
                                         ) : (
                                             <tech.icon className="w-8 h-8 md:w-10 md:h-10 text-gray-400 group-hover:text-white transition-all duration-300" />
                                         )}

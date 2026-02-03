@@ -1,11 +1,11 @@
 "use client";
 
 import { useGLTF } from "@react-three/drei";
-import { useFrame } from "@react-three/fiber";
+import { ThreeElements, useFrame } from "@react-three/fiber";
 import { useRef } from "react";
 import * as THREE from "three";
 
-export default function Helmet(props: any) {
+export default function Helmet(props: ThreeElements['group']) {
     // Using the standard SciFiHelmet from Khronos Sample Models
     const { scene } = useGLTF("https://raw.githubusercontent.com/KhronosGroup/glTF-Sample-Assets/main/Models/DamagedHelmet/glTF-Binary/DamagedHelmet.glb");
     const modelRef = useRef<THREE.Group>(null);

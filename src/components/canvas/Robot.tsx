@@ -1,11 +1,11 @@
 "use client";
 
 import { useAnimations, useGLTF } from "@react-three/drei";
-import { useFrame } from "@react-three/fiber";
+import { ThreeElements, useFrame } from "@react-three/fiber";
 import { useEffect, useRef } from "react";
 import * as THREE from "three";
 
-export default function Robot(props: any) {
+export default function Robot(props: ThreeElements['group']) {
     // Load the Robot Expressive model (Creative Commons CC0)
     const { scene, animations } = useGLTF("https://raw.githubusercontent.com/mrdoob/three.js/master/examples/models/gltf/RobotExpressive/RobotExpressive.glb");
     const group = useRef<THREE.Group>(null);

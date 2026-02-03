@@ -55,8 +55,6 @@ function ScrollHelmet() {
 }
 
 export default function BeastScene() {
-    const { scrollY } = useScroll();
-
     return (
         <motion.div className="w-full h-full absolute inset-0">
             <Canvas

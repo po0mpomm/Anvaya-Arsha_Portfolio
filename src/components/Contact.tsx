@@ -1,7 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { Mail, MapPin, Linkedin, Github, LayoutTemplate, Power, ArrowRight } from "lucide-react";
+import { Mail, Linkedin, Github, ArrowRight } from "lucide-react";
 import dynamic from "next/dynamic";
 
 const SplineScene = () => (
