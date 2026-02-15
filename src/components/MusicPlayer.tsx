@@ -8,10 +8,13 @@ export default function MusicPlayer() {
     const [isPlaying, setIsPlaying] = useState(false);
     const [isMuted, setIsMuted] = useState(false);
     const [isMinimized, setIsMinimized] = useState(false);
-    const [volume, setVolume] = useState(0.3);
+    const [volume, setVolume] = useState(0.5);
     const [hasError, setHasError] = useState(false);
     const [rotation, setRotation] = useState(0);
     const audioRef = useRef<HTMLAudioElement | null>(null);
+
+    const userPausedRef = useRef(false);
+    const hasInteractedRef = useRef(false);
 
     // Scroll Logic for Auto-Minimize
     const { scrollY } = useScroll();
@@ -45,10 +48,11 @@ export default function MusicPlayer() {
 
         if (isPlaying) {
             audioRef.current.pause();
+            userPausedRef.current = true; // Manual Pause
         } else {
+            userPausedRef.current = false; // Manual Play
             audioRef.current.play().catch(e => {
-                console.log("Autoplay prevented:", e);
-                // User interaction needed
+                console.log("Play failed:", e);
             });
         }
         setIsPlaying(!isPlaying);
@@ -79,22 +83,105 @@ export default function MusicPlayer() {
         console.error("Music Player Error: Audio file not found or format unsupported.");
     };
 
-    // Auto-play on mount
+    // Guaranteed Autoplay Logic
     useEffect(() => {
-        if (audioRef.current) {
-            audioRef.current.volume = volume;
-            const playPromise = audioRef.current.play();
-            if (playPromise !== undefined) {
-                playPromise.then(() => {
-                    setIsPlaying(true);
-                    setHasError(false);
-                }).catch((error) => {
-                    console.log("Auto-play prevented. User interaction required.");
-                    setIsPlaying(false);
-                });
+        const audio = audioRef.current;
+        if (!audio) return;
+
+        audio.volume = volume;
+
+        // Loop: Check every 1000ms
+        const checkInterval = setInterval(() => {
+            if (userPausedRef.current) return;
+
+            // If audio is playing but is muted, and we HAVE interaction, try to unmute.
+            // This covers cases where interaction happened but didn't trigger the event listener instant unmute somehow.
+            if (!audio.paused && audio.muted && hasInteractedRef.current) {
+                audio.muted = false;
             }
-        }
+        }, 1000);
+
+        // Global Interaction Listener (One-time trigger for interaction state)
+        const handleInteraction = (e: Event) => {
+            // console.log("Interaction:", e.type); // Debugging
+            hasInteractedRef.current = true;
+
+            if (userPausedRef.current) return;
+
+            // If playing and muted, unmute now that we have interaction
+            if (!audio.paused && audio.muted) {
+                console.log("Interaction detected (" + e.type + "), attempting to UNMUTE.");
+                audio.muted = false;
+            }
+            // Ensure volume is restored
+            if (audio.volume !== volume) {
+                audio.volume = volume;
+            }
+            // If somehow paused but not by user, resume
+            if (audio.paused) {
+                audio.play().catch(() => { });
+            }
+        };
+
+        // Sync UI State with Audio Events
+        const onPlay = () => setIsPlaying(true);
+        const onPause = () => {
+            // Honest UI: If it pauses (for any reason), show Paused.
+            setIsPlaying(false);
+        };
+
+        audio.addEventListener("play", onPlay);
+        audio.addEventListener("pause", onPause);
+
+        const events = ["click", "keydown", "scroll", "wheel", "touchmove", "touchstart", "mousemove", "mouseover", "mouseenter", "focus", "pointerdown", "pointermove"];
+
+        events.forEach(e => {
+            // Passive: false might help with reliability on some browsers for wheel/touch
+            const opts = (e === 'wheel' || e === 'touchmove') ? { capture: true, passive: false } : { capture: true };
+            window.addEventListener(e, handleInteraction, opts);
+        });
+
+        // Preloader Signal - THE MAIN TRIGGER
+        const handleStartAudio = () => {
+            console.log("Received START_AUDIO signal. User Interacted:", hasInteractedRef.current);
+            userPausedRef.current = false;
+
+            if (hasInteractedRef.current) {
+                // User has interacted (e.g. clicked preloader), safe to play unmuted
+                audio.muted = false;
+                audio.play().catch(e => {
+                    console.warn("Unmuted autoplay failed despite interaction:", e);
+                    // Fallback
+                    audio.muted = true;
+                    audio.play().catch(() => { });
+                });
+            } else {
+                // No interaction yet (waiting for preloader), MUST start muted to avoid error
+                audio.muted = true;
+                const playPromise = audio.play();
+                if (playPromise !== undefined) {
+                    playPromise.catch(e => {
+                        console.log("Muted autoplay failed (unexpected):", e);
+                    });
+                }
+            }
+        };
+
+        window.addEventListener("START_AUDIO", handleStartAudio);
+
+        return () => {
+            clearInterval(checkInterval);
+            audio.removeEventListener("play", onPlay);
+            audio.removeEventListener("pause", onPause);
+            window.removeEventListener("START_AUDIO", handleStartAudio);
+            events.forEach(e => {
+                const opts = (e === 'wheel' || e === 'touchmove') ? { capture: true, passive: false } : { capture: true };
+                window.removeEventListener(e, handleInteraction, opts);
+            });
+        };
     }, []);
+
+
 
     if (hasError) return null; // Hide if broken
 
@@ -112,13 +199,16 @@ export default function MusicPlayer() {
                 stiffness: 400,
                 damping: 35
             }}
-            className="fixed bottom-8 right-8 z-50 bg-black/50 backdrop-blur-3xl border border-white/10 border-t-white/20 border-l-white/20 shadow-2xl overflow-hidden ring-1 ring-white/5"
-            style={{ borderRadius: "32px" }}
+            className="fixed bottom-4 right-4 md:bottom-8 md:right-8 z-50 bg-black/50 backdrop-blur-3xl border border-white/10 border-t-white/20 border-l-white/20 shadow-2xl overflow-hidden ring-1 ring-white/5"
+            style={{ borderRadius: "32px", maxWidth: "calc(100vw - 2rem)" }}
         >
             <audio
                 ref={audioRef}
                 src="/audio/on-my-way.mp3"
                 loop
+                // autoPlay // REMOVED: Managed by useEffect
+                // muted // REMOVED: Managed by useEffect
+                playsInline
                 onError={handleError}
             />
 
@@ -196,9 +286,7 @@ export default function MusicPlayer() {
                         </button>
 
                         <div className="flex-1 flex items-center gap-2">
-                            <button onClick={toggleMute} className="text-gray-400 hover:text-white px-1">
-                                {isMuted || volume === 0 ? <VolumeX size={16} /> : <Volume2 size={16} />}
-                            </button>
+                            <Volume2 size={16} className="text-gray-400" />
                             <div className="flex-1 h-1 bg-white/10 rounded-full overflow-hidden relative group/slider cursor-pointer">
                                 <motion.div
                                     className="absolute inset-y-0 left-0 bg-accent-NEON_GREEN"

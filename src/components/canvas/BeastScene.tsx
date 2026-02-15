@@ -2,33 +2,36 @@
 
 import { Canvas, useFrame } from "@react-three/fiber";
 import { Float, Center } from "@react-three/drei";
-import { Suspense, useRef } from "react";
+import { Suspense, useRef, useState, useEffect } from "react";
 import { useScroll, useTransform, motion } from "framer-motion";
 import * as THREE from "three";
 import Helmet from "./Helmet";
 
 function ScrollHelmet() {
     const { scrollY } = useScroll();
+    const [isMobile, setIsMobile] = useState(false);
 
-    // Transform values for the 3D Scene
-    // Path: Hero (Center) -> About/Skills (Right) -> Experience (Left) -> Projects (Right) -> Developer (Left)
+    useEffect(() => {
+        const checkMobile = () => setIsMobile(window.innerWidth < 768);
+        checkMobile();
+        window.addEventListener("resize", checkMobile);
+        return () => window.removeEventListener("resize", checkMobile);
+    }, []);
 
-    const scale = useTransform(scrollY, [0, 800, 2600, 3400, 4200], [2.8, 1.2, 1.2, 1.0, 1.0]);
+    // --- DESKTOP TRANSFORMS ---
+    const scaleDesktop = useTransform(scrollY, [0, 800, 2600, 3400, 4200], [2.8, 1.2, 1.2, 1.0, 1.0]);
+    const xDesktop = useTransform(scrollY, [0, 800, 3600, 4100], [0, 3.5, 3.5, -3.5]);
 
-    // Position X: 
-    // 0: Center
-    // 800-3600: Right (+3.5) - Stays Right for About/Skills/Experience
-    // 3600-4100: Left (-3.5) - Moves to Left for Developer Section
-    // 4100+: Left (-3.5) - Holds position
-    const x = useTransform(scrollY, [0, 800, 3600, 4100], [0, 3.5, 3.5, -3.5]);
+    // --- MOBILE TRANSFORMS ---
+    // Smaller scale, tighter X bounds to stay in viewport
+    const scaleMobile = useTransform(scrollY, [0, 800, 2600, 3400, 4200], [1.8, 0.9, 0.9, 0.8, 0.8]);
+    const xMobile = useTransform(scrollY, [0, 800, 3600, 4100], [0, 1.2, 1.2, -1.2]);
 
-    // Position Y:
-    // 0-4200: Centered vertically (0) - Fixed
-    // 4200+: Moves UP (+Y) matching scroll speed
+
+    // Position Y (Shared logic essentially, but maybe adjusted if needed)
     const y = useTransform(scrollY, [0, 4200, 6200], [0, 0, 10]);
 
-    // Rotation: Add some spin during the transition
-    // Stop rotation completely after 4200
+    // Rotation
     const rotateX = useTransform(scrollY, [0, 800, 3400, 4200], [0.2, 0.5, 0.2, 0.4]);
     const rotateY = useTransform(scrollY, [0, 3400, 4200], [0, -Math.PI * 2, -Math.PI * 4]);
 
@@ -36,9 +39,11 @@ function ScrollHelmet() {
 
     useFrame(() => {
         if (groupRef.current) {
-            // Read latest values from MotionValues without re-rendering React
-            groupRef.current.scale.setScalar(scale.get());
-            groupRef.current.position.x = x.get();
+            const currentScale = isMobile ? scaleMobile.get() : scaleDesktop.get();
+            const currentX = isMobile ? xMobile.get() : xDesktop.get();
+
+            groupRef.current.scale.setScalar(currentScale);
+            groupRef.current.position.x = currentX;
             groupRef.current.position.y = y.get();
             groupRef.current.rotation.x = rotateX.get();
             groupRef.current.rotation.y = rotateY.get();

@@ -30,24 +30,24 @@ export default function Hero() {
                     <div className="absolute inset-0 bg-black/60 blur-xl -z-10 rounded-full scale-110" />
 
                     <div className="inline-block border border-accent-NEON_GREEN/30 bg-black/80 backdrop-blur-md px-4 py-1 mb-6">
-                        <span className="text-xs font-bold text-accent-NEON_GREEN tracking-widest animate-pulse">
+                        <span className="text-[10px] md:text-xs font-bold text-accent-NEON_GREEN tracking-widest animate-pulse">
                             ● SYSTEM ONLINE
                         </span>
                     </div>
 
-                    <h1 className="text-5xl md:text-8xl font-black text-white tracking-tighter mb-2 relative z-10 drop-shadow-[0_0_15px_rgba(0,255,65,0.5)]">
+                    <h1 className="text-4xl sm:text-5xl md:text-8xl font-black text-white tracking-tighter mb-4 md:mb-2 relative z-10 drop-shadow-[0_0_15px_rgba(0,255,65,0.5)]">
                         ANVAYA<span className="text-accent-NEON_GREEN">_ARSHA</span>
                     </h1>
-                    <p className="text-xs md:text-sm text-gray-400 tracking-[1em] uppercase relative z-10 font-bold bg-black/40 inline-block px-2">
+                    <p className="text-[10px] sm:text-xs md:text-sm text-gray-400 tracking-[0.5em] md:tracking-[1em] uppercase relative z-10 font-bold bg-black/40 inline-block px-2">
                         Software Developer // Full Stack
                     </p>
                 </motion.div>
 
                 {/* Console Output Role */}
-                <div className="h-16 flex justify-center items-center text-accent-CYBER_CYAN font-bold text-lg md:text-2xl">
-                    <span className="mr-2">{">"}</span>
+                <div className="h-16 flex justify-center items-center text-accent-CYBER_CYAN font-bold text-sm sm:text-lg md:text-2xl text-center px-4">
+                    <span className="mr-2 hidden sm:inline">{">"}</span>
                     FULL_STACK_DEVELOPER | UI/UX_ENGINEER
-                    <span className="w-3 h-6 bg-accent-CYBER_CYAN ml-2 animate-pulse" />
+                    <span className="w-2 h-4 md:w-3 md:h-6 bg-accent-CYBER_CYAN ml-2 animate-pulse" />
                 </div>
 
                 {/* CTA Buttons */}

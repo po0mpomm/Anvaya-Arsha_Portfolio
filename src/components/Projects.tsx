@@ -93,7 +93,7 @@ export default function Projects() {
         <section id="projects" ref={containerRef} className="bg-transparent relative overflow-hidden">
 
             {/* --- PART 1: DESIGNER ANVAYA --- */}
-            <div className="relative py-24">
+            <div className="relative py-12 md:py-24">
                 <div className="absolute inset-0 bg-[url('/grid.svg')] opacity-10" />
 
                 <div className="container mx-auto px-6 relative z-10">
@@ -107,7 +107,7 @@ export default function Projects() {
                             <Palette className="text-accent-CYBER_CYAN" size={32} />
                             <span className="text-accent-CYBER_CYAN tracking-[0.5em] text-xs font-bold uppercase">Persona_01</span>
                         </div>
-                        <h2 className="text-5xl md:text-7xl font-black text-white uppercase tracking-tighter">
+                        <h2 className="text-3xl sm:text-5xl md:text-7xl font-black text-white uppercase tracking-tighter">
                             Meet <span className="text-transparent bg-clip-text bg-gradient-to-r from-accent-CYBER_CYAN to-blue-500">Designer</span> Anvaya
                         </h2>
                         <p className="max-w-xl text-gray-400 mt-6 text-lg border-l-2 border-accent-CYBER_CYAN pl-6">
@@ -128,7 +128,7 @@ export default function Projects() {
                                     initial={{ opacity: 0, scale: 0.9 }}
                                     whileInView={{ opacity: 1, scale: 1 }}
                                     transition={{ delay: i * 0.1, duration: 0.5 }}
-                                    className="group relative min-w-[320px] md:min-w-[420px] aspect-[4/5] bg-neutral-900 rounded-xl overflow-hidden snap-center border border-white/5 hover:border-accent-CYBER_CYAN/50 transition-all shadow-2xl"
+                                    className="group relative min-w-[85vw] sm:min-w-[320px] md:min-w-[420px] aspect-[4/5] bg-neutral-900 rounded-xl overflow-hidden snap-center border border-white/5 hover:border-accent-CYBER_CYAN/50 transition-all shadow-2xl"
                                 >
                                     {/* Abstract Artistic Backgrounds based on project type */}
                                     {/* If customImage exists, show it. Otherwise show abstract gradient */}
@@ -183,7 +183,7 @@ export default function Projects() {
 
 
             {/* --- PART 2: DEVELOPER ARSHA --- */}
-            <div className="relative py-24">
+            <div className="relative py-12 md:py-24">
                 <div className="absolute inset-0 bg-gradient-to-b from-accent-NEON_GREEN/5 to-transparent pointer-events-none" />
 
                 <div className="container mx-auto px-6">
@@ -197,7 +197,7 @@ export default function Projects() {
                             <span className="text-accent-NEON_GREEN tracking-[0.5em] text-xs font-bold uppercase">Persona_02</span>
                             <Terminal className="text-accent-NEON_GREEN" size={32} />
                         </div>
-                        <h2 className="text-5xl md:text-7xl font-black text-white uppercase tracking-tighter">
+                        <h2 className="text-3xl sm:text-5xl md:text-7xl font-black text-white uppercase tracking-tighter">
                             Meet <span className="text-transparent bg-clip-text bg-gradient-to-r from-accent-NEON_GREEN to-emerald-600">Developer</span> Arsha
                         </h2>
                         <p className="max-w-xl text-gray-400 mt-6 text-lg border-r-2 border-accent-NEON_GREEN pr-6 ml-auto">

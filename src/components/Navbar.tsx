@@ -61,6 +61,29 @@ export default function Navbar() {
             {/* progress line */}
             {/* progress line removed for cleaner look */}
             {/* <div className="h-[1px] w-full bg-gradient-to-r from-transparent via-accent-NEON_GREEN to-transparent opacity-50 absolute bottom-0" /> */}
+            {/* Mobile Menu Overlay */}
+            {isOpen && (
+                <div className="fixed inset-0 z-40 bg-black/95 backdrop-blur-xl flex flex-col items-center justify-center gap-8 md:hidden">
+                    {navLinks.map((link) => (
+                        <Link
+                            key={link.name}
+                            href={link.href}
+                            onClick={() => setIsOpen(false)}
+                            className="text-2xl font-bold text-gray-400 hover:text-accent-NEON_GREEN transition-colors tracking-widest uppercase"
+                        >
+                            {link.name}
+                        </Link>
+                    ))}
+                    <a
+                        href="/assets/Resume_Anvaya_Arsha.pdf"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="px-6 py-3 text-sm font-bold border border-accent-NEON_GREEN text-accent-NEON_GREEN hover:bg-accent-NEON_GREEN hover:text-black transition-colors uppercase"
+                    >
+                        [ Download_Resume ]
+                    </a>
+                </div>
+            )}
         </nav>
     );
 }

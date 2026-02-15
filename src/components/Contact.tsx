@@ -32,16 +32,16 @@ export default function Contact() {
                     initial={{ opacity: 0, y: -20 }}
                     whileInView={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.8 }}
-                    className="text-center mt-12 mb-[-50px] z-20 mix-blend-difference"
+                    className="text-center mt-12 mb-[-30px] md:mb-[-50px] z-20 mix-blend-difference"
                 >
-                    <h2 className="text-6xl md:text-8xl font-black uppercase tracking-tighter leading-none">
+                    <h2 className="text-4xl sm:text-6xl md:text-8xl font-black uppercase tracking-tighter leading-none px-4">
                         ALWAYS <span className="text-gray-700 italic font-serif">BUILDING</span><br />
                         THE <span className="text-accent-NEON_GREEN">FUTURE.</span>
                     </h2>
                 </motion.div>
 
                 {/* CENTRAL 3D MODEL */}
-                <div className="relative w-full h-[800px] md:h-[900px] flex justify-center items-center -mt-32 md:-mt-40 mt-8 -mb-40">
+                <div className="relative w-full h-[500px] md:h-[900px] flex justify-center items-center -mt-16 md:-mt-40 mt-8 -mb-20 md:-mb-40">
                     <motion.div
                         initial={{ opacity: 0, scale: 0.5 }}
                         whileInView={{ opacity: 1, scale: 0.65 }}

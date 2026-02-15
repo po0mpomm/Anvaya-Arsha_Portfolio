@@ -24,7 +24,7 @@ const experiences = [
 
 export default function Experience() {
     return (
-        <section id="experience" className="py-24 bg-transparent text-white border-b border-white/5 relative overflow-hidden">
+        <section id="experience" className="py-12 md:py-24 bg-transparent text-white border-b border-white/5 relative overflow-hidden">
             {/* Background Grid Decoration */}
             <div className="absolute inset-0 bg-[linear-gradient(rgba(0,255,65,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(0,255,65,0.03)_1px,transparent_1px)] bg-[size:24px_24px] pointer-events-none" />
 
