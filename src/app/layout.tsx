@@ -5,6 +5,7 @@ import SmoothScroll from "@/components/SmoothScroll";
 import FlowingBackground from "@/components/FlowingBackground";
 
 import Preloader from "@/components/Preloader";
+import MusicPlayer from "@/components/MusicPlayer";
 
 const jetbrainsMono = JetBrains_Mono({
   subsets: ["latin"],
@@ -31,6 +32,7 @@ export default function RootLayout({
         <Preloader />
         <FlowingBackground />
         <SmoothScroll>{children}</SmoothScroll>
+        <MusicPlayer />
       </body>
     </html>
   );
