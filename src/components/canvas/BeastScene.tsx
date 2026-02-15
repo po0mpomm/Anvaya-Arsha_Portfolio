@@ -25,7 +25,9 @@ function ScrollHelmet() {
     // --- MOBILE TRANSFORMS ---
     // Smaller scale, tighter X bounds to stay in viewport
     const scaleMobile = useTransform(scrollY, [0, 800, 2600, 3400, 4200], [1.8, 0.9, 0.9, 0.8, 0.8]);
-    const xMobile = useTransform(scrollY, [0, 800, 3600, 4100], [0, 1.2, 1.2, -1.2]);
+
+    // Added drift: 1.2 -> 0.8 during the long text sections so it doesn't look "stuck"
+    const xMobile = useTransform(scrollY, [0, 800, 3600, 4100], [0, 1.2, 0.8, -1.2]);
 
 
     // Position Y (Shared logic essentially, but maybe adjusted if needed)
@@ -64,13 +66,13 @@ export default function BeastScene() {
         <motion.div className="w-full h-full absolute inset-0">
             <Canvas
                 className="w-full h-full pointer-events-auto"
-                dpr={1} // Fixed 1x resolution for consistent 60FPS
+                dpr={[1, 1.5]} // Clamp pixel ratio for mobile performance
                 performance={{ min: 0.5 }}
                 camera={{ position: [0, 0, 8], fov: 35 }}
                 gl={{
-                    antialias: true,
+                    antialias: false, // OFF for mobile performance
                     alpha: true,
-                    powerPreference: "high-performance", // Request discrete GPU
+                    powerPreference: "default", // Save battery
                     stencil: false,
                     depth: true,
                 }}

@@ -24,7 +24,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className="dark">
+    <html lang="en" className="dark" suppressHydrationWarning>
       <body
         className={`${jetbrainsMono.variable} font-mono antialiased text-white selection:bg-[#00FF41] selection:text-black overflow-x-hidden`}
         style={{ color: "#00FF41", minHeight: '100vh' }}
