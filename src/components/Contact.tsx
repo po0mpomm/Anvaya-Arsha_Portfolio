@@ -3,15 +3,17 @@
 import { motion } from "framer-motion";
 import { Mail, Linkedin, Github, ArrowRight } from "lucide-react";
 import dynamic from "next/dynamic";
+const Spline = dynamic(() => import('@splinetool/react-spline'), {
+    ssr: false,
+    loading: () => <div className="w-full h-full flex items-center justify-center text-xs text-white/20">LOADING_SCENE...</div>,
+});
 
 const SplineScene = () => (
-    <iframe
-        src='https://my.spline.design/robotfollowcursorforlandingpage-5rysLfNi1shyHK4wcD7PeoGr/'
-        frameBorder='0'
-        width='100%'
-        height='100%'
-        loading="lazy"
-    ></iframe>
+    <div className="w-full h-full">
+        <Spline
+            scene="https://prod.spline.design/zlQ0FvpjMo11Ghre/scene.splinecode"
+        />
+    </div>
 );
 
 export default function Contact() {
@@ -41,7 +43,7 @@ export default function Contact() {
                 </motion.div>
 
                 {/* CENTRAL 3D MODEL */}
-                <div className="relative w-full h-[500px] md:h-[900px] flex justify-center items-center -mt-16 md:-mt-40 mt-8 -mb-20 md:-mb-40">
+                <div className="relative w-full h-[600px] md:h-[900px] flex justify-center items-center -mt-8 md:-mt-40 mt-8 -mb-10 md:-mb-40">
                     <motion.div
                         initial={{ opacity: 0, scale: 0.5 }}
                         whileInView={{ opacity: 1, scale: 0.65 }}
@@ -49,12 +51,12 @@ export default function Contact() {
                         className="w-full h-full absolute inset-0 z-10"
                     >
                         <SplineScene />
-                        {/* Mask to hide Spline Logo */}
-                        <div className="absolute bottom-2 right-2 w-48 h-16 bg-black z-50 pointer-events-none" />
+                        {/* Mask to hide Spline Logo - Maximized coverage to completely hide watermark */}
+                        <div className="absolute bottom-0 right-0 w-56 h-16 bg-black z-[9999] pointer-events-none" />
                     </motion.div>
 
                     {/* Left Links */}
-                    <div className="absolute left-0 top-1/2 -translate-y-1/2 hidden md:flex flex-col gap-6 text-sm font-bold tracking-widest text-gray-400 z-20">
+                    <div className="absolute left-0 top-1/2 -translate-y-1/2 flex flex-col gap-6 text-sm font-bold tracking-widest text-gray-400 z-20">
                         <span className="text-[10px] text-accent-NEON_GREEN mb-2">PAGES</span>
                         <a href="#home" className="hover:text-white transition-colors">HOME</a>
                         <a href="#about" className="hover:text-white transition-colors">ABOUT_ME</a>
@@ -63,7 +65,7 @@ export default function Contact() {
                     </div>
 
                     {/* Right Links */}
-                    <div className="absolute right-0 top-1/2 -translate-y-1/2 hidden md:flex flex-col gap-6 text-sm font-bold tracking-widest text-right text-gray-400 z-20">
+                    <div className="absolute right-0 top-1/2 -translate-y-1/2 flex flex-col gap-6 text-sm font-bold tracking-widest text-right text-gray-400 z-20">
                         <span className="text-[10px] text-accent-NEON_GREEN mb-2">FOLLOW ON</span>
                         <a href="https://github.com/po0mpomm" target="_blank" className="hover:text-white transition-colors flex items-center justify-end gap-2">
                             GITHUB <Github size={16} />

@@ -6,6 +6,7 @@ import FlowingBackground from "@/components/FlowingBackground";
 
 import Preloader from "@/components/Preloader";
 import MusicPlayer from "@/components/MusicPlayer";
+import TargetCursor from "@/components/ui/TargetCursor";
 
 const jetbrainsMono = JetBrains_Mono({
   subsets: ["latin"],
@@ -30,6 +31,13 @@ export default function RootLayout({
         style={{ color: "#00FF41", minHeight: '100vh' }}
       >
         <Preloader />
+        <TargetCursor
+          spinDuration={2}
+          hideDefaultCursor={true}
+          parallaxOn={true}
+          hoverDuration={0.2}
+          targetSelector="a, button, .cursor-pointer, input, select, textarea, .cursor-target, .cursor-pointer"
+        />
         <FlowingBackground />
         <SmoothScroll>{children}</SmoothScroll>
         <MusicPlayer />

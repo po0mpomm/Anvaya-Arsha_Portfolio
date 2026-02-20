@@ -1,8 +1,8 @@
 "use client";
 
+import React, { Suspense } from "react";
 import { Canvas } from "@react-three/fiber";
 import { OrbitControls, Stage, Float } from "@react-three/drei";
-import { Suspense } from "react";
 
 function ChessPawn() {
     const materialProps = {
@@ -45,16 +45,16 @@ function ChessPawn() {
     );
 }
 
-export default function ChessModel({ scale = 1 }: { scale?: number }) {
+const ChessModel = ({ scale = 1, active = true }: { scale?: number; active?: boolean }) => {
     return (
         <div className="w-full h-full">
-            <Canvas shadows dpr={[1, 2]} camera={{ fov: 45 }}>
+            <Canvas shadows dpr={[1, 2]} camera={{ fov: 45 }} frameloop={active ? "always" : "never"}>
                 <Suspense fallback={null}>
                     <Stage environment="city" intensity={0.5}>
                         <Float
-                            speed={2}
-                            rotationIntensity={0.5}
-                            floatIntensity={0.5}
+                            speed={active ? 2 : 0}
+                            rotationIntensity={active ? 0.5 : 0}
+                            floatIntensity={active ? 0.5 : 0}
                             floatingRange={[-0.1, 0.1]}
                         >
                             <group scale={scale}>
@@ -66,9 +66,11 @@ export default function ChessModel({ scale = 1 }: { scale?: number }) {
                             <boxGeometry args={[4, 5, 4]} />
                         </mesh>
                     </Stage>
-                    <OrbitControls autoRotate autoRotateSpeed={4} enableZoom={false} />
+                    <OrbitControls autoRotate={active} autoRotateSpeed={4} enableZoom={false} />
                 </Suspense>
             </Canvas>
         </div>
     );
-}
+};
+
+export default ChessModel;

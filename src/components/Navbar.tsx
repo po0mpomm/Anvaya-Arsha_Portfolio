@@ -4,6 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Menu, X, Brackets } from "lucide-react";
+import { motion, useScroll, useMotionValueEvent } from "framer-motion";
 
 const navLinks = [
     { name: "// Home", href: "/" },
@@ -15,13 +16,33 @@ const navLinks = [
 
 export default function Navbar() {
     const [isOpen, setIsOpen] = useState(false);
+    const [isHidden, setIsHidden] = useState(false);
+    const { scrollY } = useScroll();
+
+    useMotionValueEvent(scrollY, "change", (latest) => {
+        const previous = scrollY.getPrevious() || 0;
+        if (latest > previous && latest > 150) {
+            setIsHidden(true);
+        } else {
+            setIsHidden(false);
+        }
+    });
+
     const pathname = usePathname();
 
 
 
 
     return (
-        <nav className="fixed top-0 left-0 right-0 z-[100] py-6 bg-gradient-to-b from-black/80 to-transparent">
+        <motion.nav
+            variants={{
+                visible: { y: 0 },
+                hidden: { y: "-100%" },
+            }}
+            animate={isHidden ? "hidden" : "visible"}
+            transition={{ duration: 0.35, ease: "easeInOut" }}
+            className="fixed top-0 left-0 right-0 z-[100] py-6 bg-gradient-to-b from-black/80 to-transparent"
+        >
             <div className="container mx-auto px-6 flex items-center justify-between">
                 <Link href="/" className="flex items-center gap-2 text-xl font-bold tracking-widest text-white hover:text-accent-NEON_GREEN transition-colors">
                     <Brackets size={24} className="text-accent-NEON_GREEN" />
@@ -84,6 +105,6 @@ export default function Navbar() {
                     </a>
                 </div>
             )}
-        </nav>
+        </motion.nav>
     );
 }

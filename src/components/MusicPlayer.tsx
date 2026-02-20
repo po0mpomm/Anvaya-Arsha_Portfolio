@@ -1,8 +1,8 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
-import { motion, AnimatePresence, useScroll, useMotionValueEvent } from "framer-motion";
-import { Play, Pause, Disc, Volume2, VolumeX, Minimize2, AlertCircle, X, Maximize2 } from "lucide-react";
+import { motion, useScroll, useMotionValueEvent, AnimatePresence } from "framer-motion";
+import { Play, Pause, Volume2, X, Disc, Maximize2, SkipForward, SkipBack, Music, Activity } from "lucide-react";
 
 export default function MusicPlayer() {
     const [isPlaying, setIsPlaying] = useState(false);
@@ -10,163 +10,81 @@ export default function MusicPlayer() {
     const [isMinimized, setIsMinimized] = useState(false);
     const [volume, setVolume] = useState(0.5);
     const [hasError, setHasError] = useState(false);
-    const [rotation, setRotation] = useState(0);
     const audioRef = useRef<HTMLAudioElement | null>(null);
-
     const userPausedRef = useRef(false);
     const hasInteractedRef = useRef(false);
-
-    // Scroll Logic for Auto-Minimize
     const { scrollY } = useScroll();
 
+    // Auto-minimize on scroll
     useMotionValueEvent(scrollY, "change", (latest) => {
-        // Threshold: 100px (just after start of scroll)
         const shouldBeMinimized = latest > 100;
-
-        // Only update if state needs changing to avoid re-renders
-        if (shouldBeMinimized && !isMinimized) {
-            setIsMinimized(true);
-        } else if (!shouldBeMinimized && isMinimized) {
-            setIsMinimized(false);
-        }
+        if (shouldBeMinimized && !isMinimized) setIsMinimized(true);
+        else if (!shouldBeMinimized && isMinimized) setIsMinimized(false);
     });
 
-    // Continuous rotation when playing
-    useEffect(() => {
-        let interval: NodeJS.Timeout;
-        if (isPlaying) {
-            interval = setInterval(() => {
-                setRotation(prev => (prev + 1) % 360);
-            }, 50); // Speed of rotation
-        }
-        return () => clearInterval(interval);
-    }, [isPlaying]);
-
-    // Handle play/pause
-    const togglePlay = () => {
+    const togglePlay = (e: React.MouseEvent) => {
+        e.stopPropagation();
         if (!audioRef.current || hasError) return;
-
         if (isPlaying) {
             audioRef.current.pause();
-            userPausedRef.current = true; // Manual Pause
+            userPausedRef.current = true;
         } else {
-            userPausedRef.current = false; // Manual Play
-            audioRef.current.play().catch(e => {
-                console.log("Play failed:", e);
-            });
+            userPausedRef.current = false;
+            audioRef.current.play().catch(console.error);
         }
         setIsPlaying(!isPlaying);
     };
 
-    // Handle volume change
     const handleVolumeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const newVolume = parseFloat(e.target.value);
         setVolume(newVolume);
-        if (audioRef.current) {
-            audioRef.current.volume = newVolume;
-        }
+        if (audioRef.current) audioRef.current.volume = newVolume;
         setIsMuted(newVolume === 0);
     };
 
-    // Toggle Mute
-    const toggleMute = () => {
-        if (!audioRef.current) return;
-        const newMuted = !isMuted;
-        setIsMuted(newMuted);
-        audioRef.current.muted = newMuted;
-    };
-
-    // Error Handling
     const handleError = () => {
         setHasError(true);
         setIsPlaying(false);
-        console.error("Music Player Error: Audio file not found or format unsupported.");
     };
 
-    // Guaranteed Autoplay Logic
+    // Autoplay Logic - Standardized
     useEffect(() => {
         const audio = audioRef.current;
         if (!audio) return;
-
         audio.volume = volume;
 
-        // Loop: Check every 1000ms
         const checkInterval = setInterval(() => {
             if (userPausedRef.current) return;
-
-            // If audio is playing but is muted, and we HAVE interaction, try to unmute.
-            // This covers cases where interaction happened but didn't trigger the event listener instant unmute somehow.
-            if (!audio.paused && audio.muted && hasInteractedRef.current) {
-                audio.muted = false;
-            }
+            if (!audio.paused && audio.muted && hasInteractedRef.current) audio.muted = false;
         }, 1000);
 
-        // Global Interaction Listener (One-time trigger for interaction state)
-        const handleInteraction = (e: Event) => {
-            // console.log("Interaction:", e.type); // Debugging
+        const handleInteraction = () => {
             hasInteractedRef.current = true;
-
             if (userPausedRef.current) return;
-
-            // If playing and muted, unmute now that we have interaction
-            if (!audio.paused && audio.muted) {
-                console.log("Interaction detected (" + e.type + "), attempting to UNMUTE.");
-                audio.muted = false;
-            }
-            // Ensure volume is restored
-            if (audio.volume !== volume) {
-                audio.volume = volume;
-            }
-            // If somehow paused but not by user, resume
-            if (audio.paused) {
-                audio.play().catch(() => { });
-            }
+            if (!audio.paused && audio.muted) audio.muted = false;
+            if (audio.volume !== volume) audio.volume = volume;
+            if (audio.paused) audio.play().catch(() => { });
         };
 
-        // Sync UI State with Audio Events
         const onPlay = () => setIsPlaying(true);
-        const onPause = () => {
-            // Honest UI: If it pauses (for any reason), show Paused.
-            setIsPlaying(false);
-        };
+        const onPause = () => setIsPlaying(false);
 
         audio.addEventListener("play", onPlay);
         audio.addEventListener("pause", onPause);
+        window.addEventListener("click", handleInteraction, { once: true });
+        window.addEventListener("scroll", handleInteraction, { once: true });
 
-        const events = ["click", "keydown", "scroll", "wheel", "touchmove", "touchstart", "mousemove", "mouseover", "mouseenter", "focus", "pointerdown", "pointermove"];
-
-        events.forEach(e => {
-            // Passive: false might help with reliability on some browsers for wheel/touch
-            const opts = (e === 'wheel' || e === 'touchmove') ? { capture: true, passive: false } : { capture: true };
-            window.addEventListener(e, handleInteraction, opts);
-        });
-
-        // Preloader Signal - THE MAIN TRIGGER
+        // Preloader Signal
         const handleStartAudio = () => {
-            console.log("Received START_AUDIO signal. User Interacted:", hasInteractedRef.current);
             userPausedRef.current = false;
-
             if (hasInteractedRef.current) {
-                // User has interacted (e.g. clicked preloader), safe to play unmuted
                 audio.muted = false;
-                audio.play().catch(e => {
-                    console.warn("Unmuted autoplay failed despite interaction:", e);
-                    // Fallback
-                    audio.muted = true;
-                    audio.play().catch(() => { });
-                });
+                audio.play().catch(() => { });
             } else {
-                // No interaction yet (waiting for preloader), MUST start muted to avoid error
                 audio.muted = true;
-                const playPromise = audio.play();
-                if (playPromise !== undefined) {
-                    playPromise.catch(e => {
-                        console.log("Muted autoplay failed (unexpected):", e);
-                    });
-                }
+                audio.play().catch(() => { });
             }
         };
-
         window.addEventListener("START_AUDIO", handleStartAudio);
 
         return () => {
@@ -174,145 +92,218 @@ export default function MusicPlayer() {
             audio.removeEventListener("play", onPlay);
             audio.removeEventListener("pause", onPause);
             window.removeEventListener("START_AUDIO", handleStartAudio);
-            events.forEach(e => {
-                const opts = (e === 'wheel' || e === 'touchmove') ? { capture: true, passive: false } : { capture: true };
-                window.removeEventListener(e, handleInteraction, opts);
-            });
         };
     }, []);
 
-
-
-    if (hasError) return null; // Hide if broken
+    if (hasError) return null;
 
     return (
         <motion.div
             layout
             initial={false}
             animate={{
-                width: isMinimized ? "64px" : "320px",
-                height: isMinimized ? "64px" : "180px", // Approximate height of expanded
-                borderRadius: "32px"
+                width: isMinimized ? "auto" : "auto",
             }}
             transition={{
                 type: "spring",
-                stiffness: 400,
-                damping: 35
+                stiffness: 500,
+                damping: 30,
+                mass: 1
             }}
-            className="fixed bottom-4 right-4 md:bottom-8 md:right-8 z-50 bg-black/50 backdrop-blur-3xl border border-white/10 border-t-white/20 border-l-white/20 shadow-2xl overflow-hidden ring-1 ring-white/5"
-            style={{ borderRadius: "32px", maxWidth: "calc(100vw - 2rem)" }}
+            className="fixed bottom-6 right-6 md:bottom-10 md:right-10 z-50"
         >
-            <audio
-                ref={audioRef}
-                src="/audio/on-my-way.mp3"
-                loop
-                // autoPlay // REMOVED: Managed by useEffect
-                // muted // REMOVED: Managed by useEffect
-                playsInline
-                onError={handleError}
-            />
+            <audio ref={audioRef} src="/audio/on-my-way.mp3" loop playsInline onError={handleError} />
 
-            {/* Glossy Reflective Shine */}
-            <div className="absolute inset-0 bg-gradient-to-tr from-white/5 to-transparent pointer-events-none z-0" />
-
-            {/* Content Container to handle relative positioning */}
-            <div className="relative w-full h-full z-10">
-
-                {/* Minimized View */}
-                <motion.button
-                    animate={{
-                        opacity: isMinimized ? 1 : 0,
-                        scale: isMinimized ? 1 : 0.5,
-                        pointerEvents: isMinimized ? "auto" : "none"
-                    }}
-                    transition={{ duration: 0.3 }}
-                    onClick={() => setIsMinimized(false)}
-                    className="absolute inset-0 flex items-center justify-center w-full h-full"
-                >
-                    <motion.div
-                        animate={{ rotate: isPlaying ? 360 : 0 }}
-                        transition={{ duration: 3, repeat: Infinity, ease: "linear" }}
-                        className="absolute inset-1 rounded-full border-2 border-dashed border-white/20"
-                    />
-                    <Disc size={24} className={`text-accent-NEON_GREEN ${isPlaying ? "animate-pulse" : "opacity-50"}`} />
-                </motion.button>
-
-                {/* Expanded View */}
-                <motion.div
-                    animate={{
-                        opacity: isMinimized ? 0 : 1,
-                        scale: isMinimized ? 0.9 : 1,
-                        filter: isMinimized ? "blur(10px)" : "blur(0px)",
-                        pointerEvents: isMinimized ? "none" : "auto"
-                    }}
-                    transition={{ duration: 0.3 }}
-                    className="absolute inset-0 p-5 flex flex-col gap-4 w-full h-full"
-                >
-
-                    {/* Top Bar */}
-                    <div className="flex justify-between items-center text-xs font-mono text-gray-400">
-                        <span className={isPlaying ? "text-accent-NEON_GREEN animate-pulse" : ""}>
-                            {isPlaying ? "PLAYING" : "PAUSED"}
-                        </span>
-                        <button onClick={() => setIsMinimized(true)} className="hover:text-white transition-colors">
-                            <Minimize2 size={16} />
-                        </button>
-                    </div>
-
-                    {/* Main Info */}
-                    <div className="flex items-center gap-4">
-                        <motion.div
-                            className="relative w-12 h-12 rounded-full bg-gradient-to-tr from-gray-800 to-black border border-white/10 flex items-center justify-center shrink-0"
-                            animate={{ rotate: isPlaying ? 360 : 0 }}
-                            transition={{ duration: 4, repeat: Infinity, ease: "linear" }}
-                        >
-                            <div className="w-3 h-3 rounded-full bg-black border border-white/20 z-10" />
-                        </motion.div>
-
-                        <div className="overflow-hidden min-w-0 flex-1">
-                            <div className="text-white font-bold text-sm tracking-wide truncate">ON MY WAY</div>
-                            <div className="text-gray-500 text-xs font-mono truncate">Alan Walker</div>
-                        </div>
-                    </div>
-
-                    {/* Controls */}
-                    <div className="flex items-center gap-3">
-                        <button
-                            onClick={togglePlay}
-                            className={`w-10 h-10 rounded-full flex items-center justify-center shrink-0 transition-all active:scale-95 ${isPlaying ? "bg-accent-NEON_GREEN text-black" : "bg-white/10 text-white hover:bg-white/20"
-                                }`}
-                        >
-                            {isPlaying ? <Pause size={18} fill="currentColor" /> : <Play size={18} fill="currentColor" className="ml-0.5" />}
-                        </button>
-
-                        <div className="flex-1 flex items-center gap-2">
-                            <Volume2 size={16} className="text-gray-400" />
-                            <div className="flex-1 h-1 bg-white/10 rounded-full overflow-hidden relative group/slider cursor-pointer">
-                                <motion.div
-                                    className="absolute inset-y-0 left-0 bg-accent-NEON_GREEN"
-                                    style={{ width: `${volume * 100}%` }}
-                                    layoutId="volume-bar"
-                                />
-                                <input
-                                    type="range"
-                                    min="0"
-                                    max="1"
-                                    step="0.01"
-                                    value={volume}
-                                    onChange={handleVolumeChange}
-                                    className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
-                                />
-                            </div>
-                        </div>
-                    </div>
-                </motion.div>
-            </div>
-
-            {/* Cable connection (Fade out) */}
+            {/* FUTURISTIC HUD CONTAINER */}
             <motion.div
-                animate={{ opacity: isMinimized ? 0 : 1 }}
-                className="absolute -top-6 right-8 w-[2px] h-6 bg-neutral-800 z-[-1]"
-            />
+                layout
+                className={`relative overflow-hidden group transition-all duration-500 ease-out font-mono
+                ${isMinimized
+                        ? "w-16 h-16 rounded-2xl bg-black/90 border border-white/20 shadow-[0_0_15px_rgba(0,0,0,0.5)] cursor-pointer hover:border-accent-NEON_GREEN/50 hover:shadow-[0_0_20px_rgba(0,255,65,0.2)]"
+                        : "h-[96px] w-[360px] bg-black/80 border border-white/10 shadow-2xl backdrop-blur-xl clip-path-notch"
+                    }`}
+                style={{
+                    clipPath: isMinimized ? "none" : "polygon(10px 0, 100% 0, 100% calc(100% - 10px), calc(100% - 10px) 100%, 0 100%, 0 10px)"
+                }}
+                onClick={isMinimized ? () => setIsMinimized(false) : undefined}
+            >
+
+                {/* --- DECORATIVE TECH ELEMENTS (Expanded Only) --- */}
+                {!isMinimized && (
+                    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.5 }}>
+                        {/* Scanning Line Effect */}
+                        <div className="absolute inset-0 bg-[linear-gradient(transparent_0%,rgba(0,255,65,0.1)_50%,transparent_100%)] h-[200%] w-full animate-scan" style={{ animationDuration: '3s' }} />
+
+                        {/* Top Tech Border */}
+                        <div className="absolute top-0 left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-accent-NEON_GREEN/50 to-transparent" />
+
+                        {/* Corner Accents */}
+                        <div className="absolute top-0 right-0 w-8 h-8 border-t border-r border-accent-NEON_GREEN/30 clip-path-polygon-[0_0,100%_0,100%_100%]" />
+                        <div className="absolute bottom-0 left-0 w-6 h-6 border-b border-l border-accent-NEON_GREEN/30" />
+
+                        {/* Tech Labels */}
+                        <div className="absolute top-1 right-2 text-[8px] text-accent-NEON_GREEN/60 tracking-widest">SYS.AUDIO_01</div>
+                        <div className="absolute bottom-1 right-8 text-[8px] text-white/20">RMS_DETECT</div>
+
+                        {/* Background Grid */}
+                        <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.03)_1px,transparent_1px)] bg-[size:16px_16px] pointer-events-none opacity-20" />
+                    </motion.div>
+                )}
+
+                {/* --- CONTENT LAYOUT --- */}
+                <div className={`relative w-full h-full flex items-center ${isMinimized ? 'justify-center p-0' : 'pl-5 pr-4 gap-5'}`}>
+
+                    {/* 1. ALBUM ART / ICON (CD PLAYER STYLE) */}
+                    <motion.div
+                        layout="position"
+                        className={`relative shrink-0 flex items-center justify-center 
+                        ${isMinimized ? "w-full h-full" : "w-16 h-16"}`}
+                    >
+                        {isMinimized ? (
+                            // Minimized: CD Case Icon
+                            <motion.div
+                                className="w-12 h-12 bg-zinc-900 rounded-md border border-white/10 flex items-center justify-center relative shadow-lg"
+                                animate={{ scale: isPlaying ? [1, 1.05, 1] : 1 }}
+                                transition={{ duration: 0.8, repeat: Infinity }}
+                            >
+                                <div className="w-8 h-8 rounded-full border border-white/5 bg-zinc-800 flex items-center justify-center">
+                                    <div className={`w-2 h-2 rounded-full ${isPlaying ? "bg-accent-NEON_GREEN animate-pulse" : "bg-zinc-600"}`} />
+                                </div>
+                                {/* 3 Green Dots (SS Reference) */}
+                                <div className="absolute bottom-1 right-1 flex gap-[2px]">
+                                    {[1, 2, 3].map(i => (
+                                        <div key={i} className={`w-[3px] h-[3px] rounded-full ${isPlaying ? "bg-accent-NEON_GREEN animate-pulse" : "bg-zinc-700"}`} style={{ animationDelay: `${i * 0.2}s` }} />
+                                    ))}
+                                </div>
+                            </motion.div>
+                        ) : (
+                            // Expanded: Spinning Realistic CD
+                            <div className="relative w-16 h-16 group/art cursor-pointer" onClick={togglePlay}>
+                                {/* CD Case Shell */}
+                                <div className="absolute inset-0 bg-zinc-900/80 rounded-lg border border-white/10 backdrop-blur-sm" />
+
+                                {/* The CD Disc */}
+                                <motion.div
+                                    animate={{ rotate: isPlaying ? 360 : 0 }}
+                                    transition={{ duration: 4, repeat: Infinity, ease: "linear" }}
+                                    className="absolute inset-[2px] rounded-full border border-white/5 overflow-hidden bg-black shadow-[0_0_15px_rgba(0,0,0,0.5)]"
+                                >
+                                    {/* Iridescent Surface */}
+                                    <div className="absolute inset-0 bg-[conic-gradient(from_0deg,#333_0deg,transparent_60deg,#333_120deg,transparent_180deg,#333_240deg,transparent_300deg,#333_360deg)] opacity-40" />
+                                    <div className="absolute inset-0 bg-[linear-gradient(135deg,rgba(255,255,255,0.1)_0%,transparent_50%,rgba(255,255,255,0.1)_100%)]" />
+                                    {/* Center Hole */}
+                                    <div className="absolute inset-[35%] rounded-full border border-white/10 bg-zinc-900 flex items-center justify-center">
+                                        <div className="w-1.5 h-1.5 rounded-full bg-black border border-white/20" />
+                                    </div>
+                                </motion.div>
+
+                                {/* Play Overlay */}
+                                <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover/art:opacity-100 transition-opacity z-10">
+                                    <div className="w-8 h-8 rounded-full bg-black/50 backdrop-blur-sm flex items-center justify-center border border-white/20">
+                                        {isPlaying ? <Pause size={12} className="text-white fill-current" /> : <Play size={12} className="text-white ml-0.5 fill-current" />}
+                                    </div>
+                                </div>
+
+                                {/* 3 Green Dots (SS Reference) */}
+                                <div className="absolute -bottom-1 -right-1 flex gap-1 z-20 bg-black/80 px-1 rounded-full border border-white/10">
+                                    {[1, 2, 3].map(i => (
+                                        <div key={i} className={`w-1 h-1 rounded-full ${isPlaying ? "bg-accent-NEON_GREEN shadow-[0_0_5px_#00FF41]" : "bg-zinc-700"}`} />
+                                    ))}
+                                </div>
+                            </div>
+                        )}
+                    </motion.div>
+
+                    {/* 2. TEXT & CONTROLS */}
+                    <AnimatePresence mode="popLayout">
+                        {!isMinimized && (
+                            <motion.div
+                                initial={{ opacity: 0, x: -5 }}
+                                animate={{ opacity: 1, x: 0 }}
+                                exit={{ opacity: 0, x: -5 }}
+                                className="flex-1 flex flex-col justify-center min-w-0 pt-1"
+                            >
+                                {/* Track Info */}
+                                <div className="flex flex-col mb-3">
+                                    <h3 className="text-white font-bold text-sm tracking-widest uppercase truncate max-w-[140px] drop-shadow-[0_0_5px_rgba(255,255,255,0.5)]">On My Way</h3>
+                                    <div className="flex items-center gap-2 mt-0.5">
+                                        <div className="px-1 py-[1px] bg-accent-NEON_GREEN/20 border border-accent-NEON_GREEN/30 text-[8px] text-accent-NEON_GREEN rounded-[2px]">MP3</div>
+                                        <p className="text-white/40 text-[10px] font-mono tracking-wider truncate">ALAN_WALKER</p>
+                                    </div>
+                                </div>
+
+                                {/* Controls Row */}
+                                <div className="flex items-center justify-between pr-2">
+                                    {/* Tech Volume Slider */}
+                                    <div className="flex items-center gap-3 w-32 group/vol">
+                                        <Volume2 size={10} className="text-accent-NEON_GREEN/60" />
+                                        <div className="flex-1 h-6 flex items-center relative">
+                                            {/* Segmented Bar Background */}
+                                            <div className="flex gap-[2px] w-full h-1.5 opacity-30">
+                                                {[...Array(10)].map((_, i) => (
+                                                    <div key={i} className="flex-1 bg-white skew-x-[-20deg]" />
+                                                ))}
+                                            </div>
+                                            {/* Active Segments */}
+                                            <div className="absolute left-0 top-1/2 -translate-y-1/2 flex gap-[2px] w-full h-1.5 overflow-hidden pointer-events-none">
+                                                <div className="flex w-full h-full" style={{ width: `${volume * 100}%` }}>
+                                                    {[...Array(10)].map((_, i) => (
+                                                        <div key={i} className={`flex-1 mx-[1px] skew-x-[-20deg] ${i / 10 < volume ? 'bg-accent-NEON_GREEN shadow-[0_0_5px_#00FF41]' : 'opacity-0'}`} />
+                                                    ))}
+                                                </div>
+                                            </div>
+                                            <input
+                                                type="range"
+                                                min="0"
+                                                max="1"
+                                                step="0.1"
+                                                value={volume}
+                                                onChange={handleVolumeChange}
+                                                className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                                            />
+                                        </div>
+                                    </div>
+
+                                    {/* Action Buttons */}
+                                    <div className="flex gap-2">
+                                        <button onClick={togglePlay} className="text-white hover:text-accent-NEON_GREEN transition-colors flex items-center justify-center w-6 h-6 border border-white/10 rounded-sm hover:border-accent-NEON_GREEN/50 bg-white/5">
+                                            {isPlaying ? <Pause size={10} /> : <Play size={10} />}
+                                        </button>
+                                        <button
+                                            onClick={(e) => { e.stopPropagation(); setIsMinimized(true); }}
+                                            className="text-white/40 hover:text-red-400 transition-colors w-6 h-6 flex items-center justify-center"
+                                        >
+                                            <X size={12} />
+                                        </button>
+                                    </div>
+                                </div>
+                            </motion.div>
+                        )}
+                    </AnimatePresence>
+                </div>
+
+                {/* --- VISUALIZER SPECTRUM (Bottom Right) --- */}
+                {!isMinimized && (
+                    <div className="absolute bottom-2 right-2 flex items-end gap-[2px] h-4 opacity-80 pointer-events-none">
+                        {[...Array(5)].map((_, i) => (
+                            <motion.div
+                                key={i}
+                                className="w-1 bg-accent-NEON_GREEN shadow-[0_0_5px_#00FF41]"
+                                animate={{
+                                    height: isPlaying ? ["20%", `${Math.random() * 80 + 20}%`, "40%"] : "10%",
+                                    opacity: isPlaying ? [0.6, 1, 0.8] : 0.3
+                                }}
+                                transition={{
+                                    duration: 0.2,
+                                    repeat: Infinity,
+                                    repeatType: "reverse",
+                                    delay: i * 0.05
+                                }}
+                            />
+                        ))}
+                    </div>
+                )}
+            </motion.div>
         </motion.div>
     );
 }
