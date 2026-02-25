@@ -48,7 +48,7 @@ function ChessPawn() {
 const ChessModel = ({ scale = 1, active = true }: { scale?: number; active?: boolean }) => {
     return (
         <div className="w-full h-full">
-            <Canvas shadows dpr={[1, 2]} camera={{ fov: 45 }} frameloop={active ? "always" : "never"}>
+            <Canvas shadows dpr={[1, 1.5]} camera={{ fov: 45 }} frameloop={active ? "always" : "never"}>
                 <Suspense fallback={null}>
                     <Stage environment="city" intensity={0.5}>
                         <Float

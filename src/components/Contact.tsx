@@ -43,7 +43,7 @@ export default function Contact() {
                 </motion.div>
 
                 {/* CENTRAL 3D MODEL */}
-                <div className="relative w-full h-[600px] md:h-[900px] flex justify-center items-center -mt-8 md:-mt-40 mt-8 -mb-10 md:-mb-40">
+                <div className="relative w-full h-[400px] md:h-[600px] lg:h-[900px] flex justify-center items-center mt-8 md:-mt-40 mb-8 md:-mb-40">
                     <motion.div
                         initial={{ opacity: 0, scale: 0.5 }}
                         whileInView={{ opacity: 1, scale: 0.65 }}
@@ -56,8 +56,8 @@ export default function Contact() {
                     </motion.div>
 
                     {/* Left Links */}
-                    <div className="absolute left-0 top-1/2 -translate-y-1/2 flex flex-col gap-6 text-sm font-bold tracking-widest text-gray-400 z-20">
-                        <span className="text-[10px] text-accent-NEON_GREEN mb-2">PAGES</span>
+                    <div className="hidden sm:flex absolute left-0 top-1/2 -translate-y-1/2 flex-col gap-4 md:gap-6 text-xs md:text-sm font-bold tracking-widest text-gray-400 z-20">
+                        <span className="text-[10px] text-accent-NEON_GREEN mb-1 md:mb-2">PAGES</span>
                         <a href="#home" className="hover:text-white transition-colors">HOME</a>
                         <a href="#about" className="hover:text-white transition-colors">ABOUT_ME</a>
                         <a href="#skills" className="hover:text-white transition-colors">SKILLSET</a>
@@ -65,8 +65,8 @@ export default function Contact() {
                     </div>
 
                     {/* Right Links */}
-                    <div className="absolute right-0 top-1/2 -translate-y-1/2 flex flex-col gap-6 text-sm font-bold tracking-widest text-right text-gray-400 z-20">
-                        <span className="text-[10px] text-accent-NEON_GREEN mb-2">FOLLOW ON</span>
+                    <div className="hidden sm:flex absolute right-0 top-1/2 -translate-y-1/2 flex-col gap-4 md:gap-6 text-xs md:text-sm font-bold tracking-widest text-right text-gray-400 z-20">
+                        <span className="text-[10px] text-accent-NEON_GREEN mb-1 md:mb-2">FOLLOW ON</span>
                         <a href="https://github.com/po0mpomm" target="_blank" className="hover:text-white transition-colors flex items-center justify-end gap-2">
                             GITHUB <Github size={16} />
                         </a>
@@ -86,6 +86,19 @@ export default function Contact() {
                             EMAIL <Mail size={16} />
                         </a>
                     </div>
+                </div>
+
+                {/* Mobile Links Fallback */}
+                <div className="sm:hidden flex flex-wrap justify-center gap-6 text-xs font-bold tracking-widest text-gray-400 z-20 mb-8">
+                    <a href="https://github.com/po0mpomm" target="_blank" className="hover:text-white transition-colors flex items-center gap-2">
+                        GITHUB
+                    </a>
+                    <a href="https://www.linkedin.com/in/anvaya-arsha/" target="_blank" className="hover:text-white transition-colors flex items-center gap-2">
+                        LINKEDIN
+                    </a>
+                    <a href="mailto:anvayaarsha2003@gmail.com" className="hover:text-white transition-colors flex items-center gap-2">
+                        EMAIL
+                    </a>
                 </div>
 
                 {/* CTA BUTTON */}

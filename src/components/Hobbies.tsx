@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useRef, useEffect, Suspense } from "react";
-import { motion, useScroll, useMotionValueEvent, useTransform, useSpring, useMotionValue, AnimatePresence } from "framer-motion";
+import { motion, useScroll, useMotionValueEvent, useTransform, useSpring, useMotionValue, AnimatePresence, useInView } from "framer-motion";
 import dynamic from 'next/dynamic';
 import { ArrowUpRight, Crosshair, Grid3X3, Trophy, Activity, Target, Scan, Fingerprint, Zap } from "lucide-react";
 const HobbiesModel = dynamic(() => import('./canvas/HobbiesModel'), {
@@ -39,6 +39,7 @@ const DataStream = ({ text, delay = 0 }: { text: string, delay?: number }) => {
 export default function Hobbies() {
     const [activeId, setActiveId] = useState<'01' | '02'>('01');
     const containerRef = useRef<HTMLElement>(null);
+    const isInView = useInView(containerRef, { margin: "200px" });
 
     // Parallax Mouse/Gaze Tracking
     const mouseX = useMotionValue(0);
@@ -264,7 +265,7 @@ export default function Hobbies() {
                                     {/* STRATEGY MODEL (Chess) */}
                                     <motion.div
                                         className="absolute inset-0 w-full h-full"
-                                        initial={{ opacity: 1, scale: 1 }}
+                                        initial={{ opacity: 0, scale: 0.95 }}
                                         animate={{
                                             opacity: activeId === '01' ? 1 : 0,
                                             scale: activeId === '01' ? 1 : 0.95,
@@ -273,7 +274,7 @@ export default function Hobbies() {
                                         }}
                                         transition={{ duration: 0.8, ease: "easeInOut" }}
                                     >
-                                        <ChessModel scale={1.2} active={activeId === '01'} />
+                                        {activeId === '01' && isInView && <ChessModel scale={1.2} active={true} />}
                                     </motion.div>
 
                                     {/* REFLEX MODEL (Gun) */}
@@ -288,7 +289,7 @@ export default function Hobbies() {
                                         }}
                                         transition={{ duration: 0.8, ease: "easeInOut" }}
                                     >
-                                        <HobbiesModel url="/models/gun.glb" scale={0.3} active={activeId === '02'} />
+                                        {activeId === '02' && isInView && <HobbiesModel url="/models/gun.glb" scale={0.3} active={true} />}
                                     </motion.div>
                                 </div>
                             </div>

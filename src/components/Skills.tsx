@@ -14,7 +14,7 @@ const skillCategories = [
     },
     {
         title: "AI / ML",
-        skills: ["Python", "Machine Learning", "Streamlit", "Random Forest", "Gemini API"],
+        skills: ["Python", "Machine Learning", "Streamlit", "LLMs", "Ollama"],
     },
     {
         title: "DESIGN_TOOLS",
@@ -86,7 +86,7 @@ export default function Skills() {
                                 { name: "JavaScript", icon: "https://cdn.simpleicons.org/javascript/F7DF1E" },
                                 { name: "TypeScript", icon: "https://cdn.simpleicons.org/typescript/3178C6" },
                                 { name: "HTML5", icon: "https://cdn.simpleicons.org/html5/E34F26" },
-                                { name: "CSS3", icon: "https://cdn.simpleicons.org/css3/1572B6" },
+                                { name: "CSS3", icon: "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/css3/css3-plain.svg" },
                                 { name: "Node.js", icon: "https://cdn.simpleicons.org/nodedotjs/339933" },
                                 { name: "Express", icon: "https://cdn.simpleicons.org/express/white" },
                                 { name: "Java", icon: "https://cdn.simpleicons.org/openjdk/white" },
@@ -103,9 +103,8 @@ export default function Skills() {
                                 { name: "Three.js", icon: "https://cdn.simpleicons.org/threedotjs/white" },
                                 { name: "Blender", icon: "https://cdn.simpleicons.org/blender/F5792A" },
                                 { name: "Docker", icon: "https://cdn.simpleicons.org/docker/2496ED" },
-                                { name: "AWS", icon: "https://cdn.simpleicons.org/amazonaws/232F3E" },
                                 { name: "WIX Studios", icon: "https://cdn.simpleicons.org/wix/0C6EBA" },
-                                { name: "Adobe Creative Suite", icon: "https://cdn.simpleicons.org/adobecreativecloud/DA1F26" },
+                                { name: "Adobe Creative Suite", icon: "https://cdn.jsdelivr.net/npm/simple-icons@v14/icons/adobecreativecloud.svg" },
                                 { name: "Spline", icon: Box },
                                 { name: "Cursor", icon: MousePointer2 },
                                 { name: "Antigravity", icon: Rocket },

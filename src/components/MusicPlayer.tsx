@@ -110,7 +110,7 @@ export default function MusicPlayer() {
                 damping: 30,
                 mass: 1
             }}
-            className="fixed bottom-6 right-6 md:bottom-10 md:right-10 z-50"
+            className="fixed bottom-4 right-4 sm:bottom-6 sm:right-6 md:bottom-10 md:right-10 z-[60] flex justify-end"
         >
             <audio ref={audioRef} src="/audio/on-my-way.mp3" loop playsInline onError={handleError} />
 
@@ -119,8 +119,8 @@ export default function MusicPlayer() {
                 layout
                 className={`relative overflow-hidden group transition-all duration-500 ease-out font-mono
                 ${isMinimized
-                        ? "w-16 h-16 rounded-2xl bg-black/90 border border-white/20 shadow-[0_0_15px_rgba(0,0,0,0.5)] cursor-pointer hover:border-accent-NEON_GREEN/50 hover:shadow-[0_0_20px_rgba(0,255,65,0.2)]"
-                        : "h-[96px] w-[360px] bg-black/80 border border-white/10 shadow-2xl backdrop-blur-xl clip-path-notch"
+                        ? "w-12 h-12 sm:w-16 sm:h-16 rounded-2xl bg-black/90 border border-white/20 shadow-[0_0_15px_rgba(0,0,0,0.5)] cursor-pointer hover:border-accent-NEON_GREEN/50 hover:shadow-[0_0_20px_rgba(0,255,65,0.2)]"
+                        : "h-[72px] sm:h-[96px] w-[calc(100vw-2rem)] sm:w-[360px] max-w-[360px] bg-black/80 border border-white/10 shadow-2xl backdrop-blur-xl clip-path-notch"
                     }`}
                 style={{
                     clipPath: isMinimized ? "none" : "polygon(10px 0, 100% 0, 100% calc(100% - 10px), calc(100% - 10px) 100%, 0 100%, 0 10px)"
@@ -151,34 +151,34 @@ export default function MusicPlayer() {
                 )}
 
                 {/* --- CONTENT LAYOUT --- */}
-                <div className={`relative w-full h-full flex items-center ${isMinimized ? 'justify-center p-0' : 'pl-5 pr-4 gap-5'}`}>
+                <div className={`relative w-full h-full flex items-center ${isMinimized ? 'justify-center p-0' : 'pl-3 pr-2 sm:pl-5 sm:pr-4 gap-3 sm:gap-5'}`}>
 
                     {/* 1. ALBUM ART / ICON (CD PLAYER STYLE) */}
                     <motion.div
                         layout="position"
                         className={`relative shrink-0 flex items-center justify-center 
-                        ${isMinimized ? "w-full h-full" : "w-16 h-16"}`}
+                        ${isMinimized ? "w-full h-full" : "w-12 h-12 sm:w-16 sm:h-16"}`}
                     >
                         {isMinimized ? (
                             // Minimized: CD Case Icon
                             <motion.div
-                                className="w-12 h-12 bg-zinc-900 rounded-md border border-white/10 flex items-center justify-center relative shadow-lg"
+                                className="w-8 h-8 sm:w-12 sm:h-12 bg-zinc-900 rounded-md border border-white/10 flex items-center justify-center relative shadow-lg"
                                 animate={{ scale: isPlaying ? [1, 1.05, 1] : 1 }}
                                 transition={{ duration: 0.8, repeat: Infinity }}
                             >
-                                <div className="w-8 h-8 rounded-full border border-white/5 bg-zinc-800 flex items-center justify-center">
-                                    <div className={`w-2 h-2 rounded-full ${isPlaying ? "bg-accent-NEON_GREEN animate-pulse" : "bg-zinc-600"}`} />
+                                <div className="w-5 h-5 sm:w-8 sm:h-8 rounded-full border border-white/5 bg-zinc-800 flex items-center justify-center">
+                                    <div className={`w-1 h-1 sm:w-2 sm:h-2 rounded-full ${isPlaying ? "bg-accent-NEON_GREEN animate-pulse" : "bg-zinc-600"}`} />
                                 </div>
                                 {/* 3 Green Dots (SS Reference) */}
-                                <div className="absolute bottom-1 right-1 flex gap-[2px]">
+                                <div className="absolute bottom-0.5 right-0.5 sm:bottom-1 sm:right-1 flex gap-[2px]">
                                     {[1, 2, 3].map(i => (
-                                        <div key={i} className={`w-[3px] h-[3px] rounded-full ${isPlaying ? "bg-accent-NEON_GREEN animate-pulse" : "bg-zinc-700"}`} style={{ animationDelay: `${i * 0.2}s` }} />
+                                        <div key={i} className={`w-[2px] h-[2px] sm:w-[3px] sm:h-[3px] rounded-full ${isPlaying ? "bg-accent-NEON_GREEN animate-pulse" : "bg-zinc-700"}`} style={{ animationDelay: `${i * 0.2}s` }} />
                                     ))}
                                 </div>
                             </motion.div>
                         ) : (
                             // Expanded: Spinning Realistic CD
-                            <div className="relative w-16 h-16 group/art cursor-pointer" onClick={togglePlay}>
+                            <div className="relative w-12 h-12 sm:w-16 sm:h-16 group/art cursor-pointer" onClick={togglePlay}>
                                 {/* CD Case Shell */}
                                 <div className="absolute inset-0 bg-zinc-900/80 rounded-lg border border-white/10 backdrop-blur-sm" />
 
@@ -205,9 +205,9 @@ export default function MusicPlayer() {
                                 </div>
 
                                 {/* 3 Green Dots (SS Reference) */}
-                                <div className="absolute -bottom-1 -right-1 flex gap-1 z-20 bg-black/80 px-1 rounded-full border border-white/10">
+                                <div className="absolute -bottom-1 -right-1 flex gap-0.5 sm:gap-1 z-20 bg-black/80 px-1 rounded-full border border-white/10">
                                     {[1, 2, 3].map(i => (
-                                        <div key={i} className={`w-1 h-1 rounded-full ${isPlaying ? "bg-accent-NEON_GREEN shadow-[0_0_5px_#00FF41]" : "bg-zinc-700"}`} />
+                                        <div key={i} className={`w-[2px] h-[2px] sm:w-1 sm:h-1 rounded-full ${isPlaying ? "bg-accent-NEON_GREEN shadow-[0_0_5px_#00FF41]" : "bg-zinc-700"}`} />
                                     ))}
                                 </div>
                             </div>
@@ -224,19 +224,19 @@ export default function MusicPlayer() {
                                 className="flex-1 flex flex-col justify-center min-w-0 pt-1"
                             >
                                 {/* Track Info */}
-                                <div className="flex flex-col mb-3">
-                                    <h3 className="text-white font-bold text-sm tracking-widest uppercase truncate max-w-[140px] drop-shadow-[0_0_5px_rgba(255,255,255,0.5)]">On My Way</h3>
-                                    <div className="flex items-center gap-2 mt-0.5">
-                                        <div className="px-1 py-[1px] bg-accent-NEON_GREEN/20 border border-accent-NEON_GREEN/30 text-[8px] text-accent-NEON_GREEN rounded-[2px]">MP3</div>
-                                        <p className="text-white/40 text-[10px] font-mono tracking-wider truncate">ALAN_WALKER</p>
+                                <div className="flex flex-col mb-1 sm:mb-3">
+                                    <h3 className="text-white font-bold text-xs sm:text-sm tracking-widest uppercase truncate max-w-[124px] sm:max-w-[140px] drop-shadow-[0_0_5px_rgba(255,255,255,0.5)]">On My Way</h3>
+                                    <div className="flex items-center gap-1.5 sm:gap-2 mt-0.5">
+                                        <div className="px-1 py-[1px] bg-accent-NEON_GREEN/20 border border-accent-NEON_GREEN/30 text-[7px] sm:text-[8px] text-accent-NEON_GREEN rounded-[2px]">MP3</div>
+                                        <p className="text-white/40 text-[9px] sm:text-[10px] font-mono tracking-wider truncate">ALAN_WALKER</p>
                                     </div>
                                 </div>
 
                                 {/* Controls Row */}
-                                <div className="flex items-center justify-between pr-2">
+                                <div className="flex items-center justify-between pr-1 sm:pr-2">
                                     {/* Tech Volume Slider */}
-                                    <div className="flex items-center gap-3 w-32 group/vol">
-                                        <Volume2 size={10} className="text-accent-NEON_GREEN/60" />
+                                    <div className="flex items-center gap-1.5 sm:gap-3 w-16 sm:w-32 group/vol">
+                                        <Volume2 size={10} className="text-accent-NEON_GREEN/60 hidden sm:block" />
                                         <div className="flex-1 h-6 flex items-center relative">
                                             {/* Segmented Bar Background */}
                                             <div className="flex gap-[2px] w-full h-1.5 opacity-30">
@@ -265,15 +265,15 @@ export default function MusicPlayer() {
                                     </div>
 
                                     {/* Action Buttons */}
-                                    <div className="flex gap-2">
-                                        <button onClick={togglePlay} className="text-white hover:text-accent-NEON_GREEN transition-colors flex items-center justify-center w-6 h-6 border border-white/10 rounded-sm hover:border-accent-NEON_GREEN/50 bg-white/5">
-                                            {isPlaying ? <Pause size={10} /> : <Play size={10} />}
+                                    <div className="flex gap-1.5 sm:gap-2">
+                                        <button onClick={togglePlay} className="text-white hover:text-accent-NEON_GREEN transition-colors flex items-center justify-center w-5 h-5 sm:w-6 sm:h-6 border border-white/10 rounded-sm hover:border-accent-NEON_GREEN/50 bg-white/5">
+                                            {isPlaying ? <Pause size={10} className="w-2 h-2 sm:w-[10px] sm:h-[10px]" /> : <Play size={10} className="w-2 h-2 sm:w-[10px] sm:h-[10px]" />}
                                         </button>
                                         <button
                                             onClick={(e) => { e.stopPropagation(); setIsMinimized(true); }}
-                                            className="text-white/40 hover:text-red-400 transition-colors w-6 h-6 flex items-center justify-center"
+                                            className="text-white/40 hover:text-red-400 transition-colors w-5 h-5 sm:w-6 sm:h-6 flex items-center justify-center"
                                         >
-                                            <X size={12} />
+                                            <X size={12} className="w-2.5 h-2.5 sm:w-3 sm:h-3" />
                                         </button>
                                     </div>
                                 </div>

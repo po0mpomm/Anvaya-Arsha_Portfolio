@@ -1,6 +1,6 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { motion, useMotionTemplate, useMotionValue, useSpring, useTransform } from "framer-motion";
 import { Award, CheckCircle, ExternalLink, ShieldCheck, Database, Cpu, Code, Layers } from "lucide-react";
 import { useState } from "react";
 
@@ -61,8 +61,135 @@ const certifications = [
     }
 ];
 
+// --- 3D INTERACTIVE TILT CARD COMPONENT ---
+const TiltCard = ({ cert, idx }: { cert: any, idx: number }) => {
+    const [isHovered, setIsHovered] = useState(false);
+
+    // Mouse Position Trackers
+    const mouseX = useMotionValue(0);
+    const mouseY = useMotionValue(0);
+
+    // Spring Physics for smooth settling
+    const springConfig = { damping: 20, stiffness: 200, mass: 0.5 };
+    const rotateX = useSpring(useTransform(mouseY, [-0.5, 0.5], [15, -15]), springConfig);
+    const rotateY = useSpring(useTransform(mouseX, [-0.5, 0.5], [-15, 15]), springConfig);
+    const glowX = useSpring(useTransform(mouseX, [-0.5, 0.5], [0, 100]), springConfig);
+    const glowY = useSpring(useTransform(mouseY, [-0.5, 0.5], [0, 100]), springConfig);
+
+    const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+        const rect = e.currentTarget.getBoundingClientRect();
+
+        // Calculate mouse position relative to card center (-0.5 to 0.5)
+        const xPct = (e.clientX - rect.left) / rect.width - 0.5;
+        const yPct = (e.clientY - rect.top) / rect.height - 0.5;
+
+        mouseX.set(xPct);
+        mouseY.set(yPct);
+    };
+
+    const handleMouseLeave = () => {
+        setIsHovered(false);
+        mouseX.set(0);
+        mouseY.set(0);
+    };
+
+    return (
+        <motion.div
+            initial={{ opacity: 0, y: 50 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: "-100px" }}
+            transition={{ duration: 0.6, delay: idx * 0.1 }}
+            className="perspective-[1500px] h-full"
+        >
+            <motion.div
+                onMouseMove={handleMouseMove}
+                onMouseEnter={() => setIsHovered(true)}
+                onMouseLeave={handleMouseLeave}
+                style={{
+                    rotateX: isHovered ? rotateX : 0,
+                    rotateY: isHovered ? rotateY : 0,
+                    transformStyle: "preserve-3d",
+                }}
+                className="group relative h-full w-full bg-black/40 backdrop-blur-xl border border-white/10 rounded-xl p-8 transition-colors duration-300 hover:border-accent-CYBER_CYAN/50 cursor-pointer"
+            >
+                {/* --- HOLOGRAPHIC GLARE EFFECT --- */}
+                <motion.div
+                    className="absolute inset-0 rounded-xl opacity-0 group-hover:opacity-100 mix-blend-screen pointer-events-none transition-opacity duration-300"
+                    style={{
+                        background: useMotionTemplate`
+                            radial-gradient(
+                                600px circle at ${glowX}% ${glowY}%,
+                                rgba(0, 255, 65, 0.1),
+                                rgba(0, 183, 255, 0.05) 40%,
+                                transparent 80%
+                            )
+                        `
+                    }}
+                />
+
+                {/* --- INTERIOR PARALLAX CONTENT --- */}
+                <div style={{ transform: "translateZ(30px)" }} className="relative z-10 h-full flex flex-col justify-between">
+
+                    <div>
+                        {/* Header: Icon & Date */}
+                        <div className="flex justify-between items-start mb-6">
+                            <div className="p-3 bg-white/5 rounded-lg border border-white/10 group-hover:border-accent-CYBER_CYAN/30 transition-colors shadow-lg">
+                                {cert.icon}
+                            </div>
+                            <span className="text-[10px] font-mono text-gray-400 border border-white/10 px-2 py-1 rounded bg-black/60 shadow-inner">
+                                {cert.date}
+                            </span>
+                        </div>
+
+                        {/* Text Content */}
+                        <div className="mb-6">
+                            <h3 className="text-xl font-black text-white mb-2 group-hover:text-accent-CYBER_CYAN transition-colors line-clamp-2 drop-shadow-md">
+                                {cert.title}
+                            </h3>
+                            <p className="text-sm text-gray-400 mb-2 font-light">{cert.issuer}</p>
+                            <div className="inline-block px-2 py-1 bg-black/50 border border-white/5 rounded text-[9px] text-gray-500 font-mono tracking-widest">
+                                ID: {cert.id}
+                            </div>
+                        </div>
+
+                        {/* Skills/Tags */}
+                        <div className="flex flex-wrap gap-2 mb-6">
+                            {cert.skills.map((skill: string, sIdx: number) => (
+                                <span
+                                    key={sIdx}
+                                    className="text-[10px] px-2 py-1 bg-white/5 text-gray-300 border border-white/10 rounded-sm group-hover:border-accent-CYBER_CYAN/30 transition-colors shadow-sm"
+                                >
+                                    {skill}
+                                </span>
+                            ))}
+                        </div>
+                    </div>
+
+                    {/* Footer / Link */}
+                    <div style={{ transform: "translateZ(20px)" }} className="pt-4 border-t border-white/10 flex items-center justify-between">
+                        <span className="text-[10px] text-accent-CYBER_CYAN font-bold flex items-center gap-1.5 tracking-widest">
+                            <CheckCircle size={14} className="opacity-80" /> VERIFIED
+                        </span>
+                        <motion.button
+                            whileHover={{ scale: 1.05 }}
+                            whileTap={{ scale: 0.95 }}
+                            className="text-[10px] flex items-center gap-2 text-white group-hover:text-accent-CYBER_CYAN transition-colors font-bold tracking-widest uppercase bg-white/5 group-hover:bg-accent-CYBER_CYAN/10 px-3 py-1.5 rounded-full border border-transparent group-hover:border-accent-CYBER_CYAN/30"
+                        >
+                            View <ExternalLink size={12} />
+                        </motion.button>
+                    </div>
+
+                </div>
+
+                {/* Decorative Cyber Corners */}
+                <div className="absolute top-0 right-0 w-8 h-8 border-t-2 border-r-2 border-accent-CYBER_CYAN/0 group-hover:border-accent-CYBER_CYAN/60 transition-all duration-500 rounded-tr-xl" />
+                <div className="absolute bottom-0 left-0 w-8 h-8 border-b-2 border-l-2 border-accent-CYBER_CYAN/0 group-hover:border-accent-CYBER_CYAN/60 transition-all duration-500 rounded-bl-xl" />
+            </motion.div>
+        </motion.div>
+    );
+};
+
 export default function Certifications() {
-    const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
 
     return (
         <section className="py-32 bg-transparent relative overflow-hidden">
@@ -93,71 +220,9 @@ export default function Certifications() {
                 </div>
 
                 {/* Grid */}
-                <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 md:gap-10">
                     {certifications.map((cert, idx) => (
-                        <motion.div
-                            key={idx}
-                            initial={{ opacity: 0, scale: 0.95 }}
-                            whileInView={{ opacity: 1, scale: 1 }}
-                            viewport={{ once: true }}
-                            transition={{ duration: 0.5, delay: idx * 0.1 }}
-                            onMouseEnter={() => setHoveredIndex(idx)}
-                            onMouseLeave={() => setHoveredIndex(null)}
-                            className="group relative h-full"
-                        >
-                            {/* Card Container */}
-                            <div className="relative h-full bg-black/40 backdrop-blur-xl border border-white/10 p-8 overflow-hidden transition-all duration-500 hover:border-accent-CYBER_CYAN/50 group-hover:shadow-[0_0_30px_rgba(0,183,255,0.1)]">
-
-                                {/* Hover Gradient Overlay */}
-                                <div className="absolute inset-0 bg-gradient-to-br from-accent-CYBER_CYAN/5 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
-
-                                {/* Header: Icon & Date */}
-                                <div className="flex justify-between items-start mb-6">
-                                    <div className="p-3 bg-white/5 rounded-lg border border-white/10 group-hover:border-accent-CYBER_CYAN/30 transition-colors">
-                                        {cert.icon}
-                                    </div>
-                                    <span className="text-xs font-mono text-gray-500 border border-white/10 px-2 py-1 rounded bg-black/50">
-                                        {cert.date}
-                                    </span>
-                                </div>
-
-                                {/* Content */}
-                                <div className="mb-6 relative z-10">
-                                    <h3 className="text-xl font-bold text-white mb-2 group-hover:text-accent-CYBER_CYAN transition-colors line-clamp-2">
-                                        {cert.title}
-                                    </h3>
-                                    <p className="text-sm text-gray-400 mb-1">{cert.issuer}</p>
-                                    <p className="text-[10px] text-gray-600 font-mono uppercase tracking-wider">ID: {cert.id}</p>
-                                </div>
-
-                                {/* Skills & Link */}
-                                <div className="space-y-4">
-                                    <div className="flex flex-wrap gap-2">
-                                        {cert.skills.map((skill, sIdx) => (
-                                            <span
-                                                key={sIdx}
-                                                className="text-[10px] px-2 py-1 bg-white/5 text-gray-300 border border-white/5 rounded hover:border-accent-CYBER_CYAN/30 hover:text-accent-CYBER_CYAN transition-colors cursor-default"
-                                            >
-                                                {skill}
-                                            </span>
-                                        ))}
-                                    </div>
-
-                                    <div className="pt-4 border-t border-white/5 flex items-center justify-between opacity-60 group-hover:opacity-100 transition-opacity">
-                                        <span className="text-xs text-accent-CYBER_CYAN font-bold flex items-center gap-1">
-                                            <CheckCircle size={12} /> VERIFIED
-                                        </span>
-                                        <button className="text-xs flex items-center gap-2 text-white hover:text-accent-CYBER_CYAN transition-colors uppercase font-bold tracking-wider">
-                                            View Credential <ExternalLink size={12} />
-                                        </button>
-                                    </div>
-                                </div>
-
-                                {/* Decorative Corners */}
-                                <div className="absolute top-0 right-0 w-8 h-8 border-t border-r border-accent-CYBER_CYAN/0 group-hover:border-accent-CYBER_CYAN/50 transition-all duration-500" />
-                                <div className="absolute bottom-0 left-0 w-8 h-8 border-b border-l border-accent-CYBER_CYAN/0 group-hover:border-accent-CYBER_CYAN/50 transition-all duration-500" />
-                            </div>
-                        </motion.div>
+                        <TiltCard key={idx} cert={cert} idx={idx} />
                     ))}
                 </div>
 

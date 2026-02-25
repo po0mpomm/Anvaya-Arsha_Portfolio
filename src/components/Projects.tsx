@@ -17,25 +17,37 @@ const designerProjects = [
         title: "PEHCHAAN_APP",
         tags: "[UI/UX, Mobile_App, Branding]",
         description: "Digital identity platform for rural India. Focused on accessibility and simplified user flows.",
-        image: "pehchaan"
+        image: "pehchaan",
+        customImage: "/assets/pehchaan.jpg"
+    },
+    {
+        title: "STACKSTORE",
+        tags: "[UI/UX, E-commerce, Web_Design]",
+        description: "Modern & clean e-commerce website design featuring luxury brand integration and user-friendly navigation.",
+        image: "stackstore",
+        customImage: "/assets/stackstore.jpg",
+        link: "https://www.figma.com/proto/MwoJQ0Q8pwZHHL3917p78Y/StackStore--Ecom-Website-?page-id=0%3A1&node-id=1-2&viewport=164%2C-162%2C0.5&t=MBawO3ofccwqQ2Tm-1&scaling=scale-down&content-scaling=fixed"
     },
     {
         title: "CYBER_CONCLAVE",
         tags: "[Web_Design, Futuristic, Event]",
         description: "Official registration portal for the National Cyber Summit. Matrix-inspired visual identity.",
-        image: "cyber"
+        image: "cyber",
+        customImage: "/assets/cyber_conclave.jpg"
     },
     {
         title: "ADVITYA_2023",
         tags: "[Creative, Cultural_Fest, Art_Direction]",
         description: "Immersive event website for VIT Bhopal's annual fest. Featuring parallax storytelling.",
-        image: "advitya"
+        image: "advitya",
+        customImage: "/assets/advitya.jpg"
     },
     {
         title: "ED_SYNAPSE",
         tags: "[SaaS, Dark_Mode, EdTech]",
         description: "AI-powered learning ecosystem with a space-themed minimal interface.",
-        image: "edsynapse"
+        image: "edsynapse",
+        customImage: "/assets/edsynapse.jpg"
     }
 ];
 
@@ -128,7 +140,7 @@ export default function Projects() {
                                     initial={{ opacity: 0, scale: 0.9 }}
                                     whileInView={{ opacity: 1, scale: 1 }}
                                     transition={{ delay: i * 0.1, duration: 0.5 }}
-                                    className="group relative min-w-[85vw] sm:min-w-[320px] md:min-w-[420px] aspect-[4/5] bg-neutral-900 rounded-xl overflow-hidden snap-center border border-white/5 hover:border-accent-CYBER_CYAN/50 transition-all shadow-2xl"
+                                    className="group relative min-w-[85vw] sm:min-w-[320px] md:min-w-[420px] aspect-[4/5] sm:aspect-[3/4] md:aspect-[4/5] bg-neutral-900 rounded-xl overflow-hidden snap-center border border-white/5 hover:border-accent-CYBER_CYAN/50 transition-all shadow-2xl"
                                 >
                                     {/* Abstract Artistic Backgrounds based on project type */}
                                     {/* If customImage exists, show it. Otherwise show abstract gradient */}
@@ -169,9 +181,15 @@ export default function Projects() {
                                                 {project.description}
                                             </p>
 
-                                            <button className="mt-6 text-xs font-bold uppercase tracking-widest flex items-center gap-2 text-white/50 group-hover:text-white transition-colors">
-                                                View Case Study <ExternalLink size={12} />
-                                            </button>
+                                            {project.link ? (
+                                                <a href={project.link} target="_blank" rel="noopener noreferrer" className="mt-6 text-xs font-bold uppercase tracking-widest flex items-center gap-2 text-white/50 group-hover:text-white transition-colors">
+                                                    View Case Study <ExternalLink size={12} />
+                                                </a>
+                                            ) : (
+                                                <button className="mt-6 text-xs font-bold uppercase tracking-widest flex items-center gap-2 text-white/50 group-hover:text-white transition-colors">
+                                                    View Case Study <ExternalLink size={12} />
+                                                </button>
+                                            )}
                                         </div>
                                     </div>
                                 </motion.div>
@@ -225,12 +243,12 @@ export default function Projects() {
                                     <p className="text-gray-400 max-w-2xl">{project.description}</p>
                                 </div>
 
-                                <div className="flex gap-4 opacity-50 group-hover:opacity-100 transition-opacity">
-                                    <a href={project.github} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 text-white hover:text-accent-NEON_GREEN font-mono text-sm uppercase">
-                                        [ <Github size={16} /> Source ]
+                                <div className="flex flex-col sm:flex-row gap-4 sm:opacity-50 group-hover:opacity-100 transition-opacity mt-4 md:mt-0 items-start sm:items-center w-full md:w-auto">
+                                    <a href={project.github} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 text-white hover:text-accent-NEON_GREEN font-mono text-[10px] sm:text-sm uppercase">
+                                        [ <Github size={14} className="sm:w-4 sm:h-4" /> Source ]
                                     </a>
-                                    <a href={project.demo} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 text-white hover:text-accent-NEON_GREEN font-mono text-sm uppercase">
-                                        [ <ExternalLink size={16} /> Demo ]
+                                    <a href={project.demo} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 text-white hover:text-accent-NEON_GREEN font-mono text-[10px] sm:text-sm uppercase">
+                                        [ <ExternalLink size={14} className="sm:w-4 sm:h-4" /> Demo ]
                                     </a>
                                 </div>
                             </motion.div>

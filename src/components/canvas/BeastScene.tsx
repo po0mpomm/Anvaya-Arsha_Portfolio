@@ -3,7 +3,7 @@
 import { Canvas, useFrame } from "@react-three/fiber";
 import { Float, Center } from "@react-three/drei";
 import { Suspense, useRef, useState, useEffect } from "react";
-import { useScroll, useTransform, motion } from "framer-motion";
+import { useScroll, useTransform, motion, useInView } from "framer-motion";
 import * as THREE from "three";
 import Helmet from "./Helmet";
 
@@ -62,10 +62,14 @@ function ScrollHelmet() {
 }
 
 export default function BeastScene() {
+    const containerRef = useRef<HTMLDivElement>(null);
+    const isInView = useInView(containerRef, { margin: "200px" });
+
     return (
-        <motion.div className="w-full h-full absolute inset-0">
+        <motion.div ref={containerRef} className="w-full h-full absolute inset-0">
             <Canvas
                 className="w-full h-full pointer-events-auto"
+                frameloop={isInView ? "always" : "never"}
                 dpr={[1, 1.5]} // Clamp pixel ratio for mobile performance
                 performance={{ min: 0.5 }}
                 camera={{ position: [0, 0, 8], fov: 35 }}

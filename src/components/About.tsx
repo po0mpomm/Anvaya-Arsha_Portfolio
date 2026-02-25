@@ -6,7 +6,7 @@ export default function About() {
     return (
         <section id="about" className="py-16 md:py-32 bg-transparent text-white relative border-b border-white/5">
             <div className="container mx-auto px-6">
-                <div className="grid md:grid-cols-2 gap-16 items-start">
+                <div className="grid md:grid-cols-2 gap-10 md:gap-16 items-start">
 
                     {/* Terminal Window Graphic */}
                     <motion.div

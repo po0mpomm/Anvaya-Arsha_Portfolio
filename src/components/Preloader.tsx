@@ -20,14 +20,9 @@ export default function Preloader() {
             {isLoading && (
                 <motion.div
                     key="preloader"
-                    onClick={() => {
-                        setIsLoading(false);
-                        window.dispatchEvent(new Event("START_AUDIO"));
-                    }}
                     // Exit strategy: Simple fade out of the container to reveal the site. 
-                    // This is much cheaper than masking or scaling a massive div.
                     exit={{ opacity: 0, transition: { duration: 0.5, delay: 0.2, ease: "easeInOut" } }}
-                    className="fixed inset-0 z-[9999] bg-black flex items-center justify-center overflow-hidden cursor-pointer group"
+                    className="fixed inset-0 z-[9999] bg-black flex items-center justify-center overflow-hidden"
                 >
                     {/* CORE CONTAINER */}
                     <motion.div
@@ -39,14 +34,14 @@ export default function Preloader() {
                         <motion.div
                             animate={{ rotate: 360 }}
                             transition={{ duration: 10, repeat: Infinity, ease: "linear" }}
-                            className="absolute inset-0 border border-white/20 rounded-full border-dashed group-hover:border-accent-NEON_GREEN/50 transition-colors"
+                            className="absolute inset-0 border border-white/20 rounded-full border-dashed transition-colors"
                         />
 
                         {/* Ring 2: Reverse Spin Cyan */}
                         <motion.div
                             animate={{ rotate: -360 }}
                             transition={{ duration: 5, repeat: Infinity, ease: "linear" }}
-                            className="absolute inset-4 border-2 border-accent-CYBER_CYAN/30 rounded-full border-t-transparent border-l-transparent group-hover:border-accent-CYBER_CYAN transition-colors"
+                            className="absolute inset-4 border-2 border-accent-CYBER_CYAN/30 rounded-full border-t-transparent border-l-transparent transition-colors"
                         />
 
                         {/* Ring 3: Fast Spin Green */}
@@ -60,7 +55,7 @@ export default function Preloader() {
                         <motion.div
                             animate={{ scale: [1, 1.2, 1], opacity: [0.5, 1, 0.5] }}
                             transition={{ duration: 1.5, repeat: Infinity }}
-                            className="w-24 h-24 bg-white/5 rounded-full backdrop-blur-md border border-white/30 flex items-center justify-center shadow-[0_0_30px_rgba(0,255,65,0.2)] group-hover:bg-accent-NEON_GREEN/20 transition-colors"
+                            className="w-24 h-24 bg-white/5 rounded-full backdrop-blur-md border border-white/30 flex items-center justify-center shadow-[0_0_30px_rgba(0,255,65,0.2)] transition-colors"
                         >
                             <span className="text-xs font-mono text-accent-NEON_GREEN font-bold animate-pulse">
                                 SYSTEM

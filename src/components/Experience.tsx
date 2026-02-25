@@ -7,7 +7,7 @@ const experiences = [
     {
         company: "LabelNest.inc",
         role: "Web & Brand Intern",
-        period: "2025 – PRESENT",
+        period: "Nov 2025 - Feb 2026",
         tech: "React // Next.js // Branding",
         description: "Architecting digital brand structures & optimizing user-facing platforms for maximum engagement.",
         icon: <Network size={20} />
@@ -56,7 +56,7 @@ export default function Experience() {
                                 transition={{ duration: 0.6, delay: index * 0.2 }}
                                 className="w-full md:w-[calc(50%-2rem)] group"
                             >
-                                <div className="relative border border-white/10 bg-black/40 backdrop-blur-sm hover:border-accent-NEON_GREEN/50 transition-all duration-300 p-6 overflow-hidden">
+                                <div className="relative border border-white/10 bg-black/40 backdrop-blur-sm hover:border-accent-NEON_GREEN/50 transition-all duration-300 p-4 md:p-6 overflow-hidden">
 
                                     {/* Cyber Corner Accents */}
                                     <div className="absolute top-0 left-0 w-2 h-2 border-t border-l border-accent-NEON_GREEN opacity-50 group-hover:opacity-100 transition-opacity" />
@@ -78,7 +78,7 @@ export default function Experience() {
                                     </div>
 
                                     {/* Body */}
-                                    <p className="text-gray-400 font-light text-sm leading-relaxed mb-4">
+                                    <p className="text-gray-400 font-light text-xs md:text-sm leading-relaxed mb-4">
                                         {exp.description}
                                     </p>
 

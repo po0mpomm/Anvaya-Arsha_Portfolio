@@ -29,16 +29,16 @@ export default function Hero() {
                 >
                     <div className="absolute inset-0 bg-black/60 blur-xl -z-10 rounded-full scale-110" />
 
-                    <div className="inline-block border border-accent-NEON_GREEN/30 bg-black/80 backdrop-blur-md px-4 py-1 mb-6">
+                    <div className="inline-block border border-accent-NEON_GREEN/30 bg-black/80 backdrop-blur-md px-3 py-1 mb-4 md:mb-6">
                         <span className="text-[10px] md:text-xs font-bold text-accent-NEON_GREEN tracking-widest animate-pulse">
                             ● SYSTEM ONLINE
                         </span>
                     </div>
 
-                    <h1 className="text-4xl sm:text-5xl md:text-8xl font-black text-white tracking-tighter mb-4 md:mb-2 relative z-10 drop-shadow-[0_0_15px_rgba(0,255,65,0.5)]">
-                        ANVAYA<span className="text-accent-NEON_GREEN">_ARSHA</span>
+                    <h1 className="text-4xl sm:text-5xl md:text-8xl font-black text-white tracking-tighter mb-4 md:mb-2 relative z-10 drop-shadow-[0_0_15px_rgba(0,255,65,0.5)] leading-tight">
+                        ANVAYA<br className="sm:hidden" /><span className="text-accent-NEON_GREEN">_ARSHA</span>
                     </h1>
-                    <p className="text-[10px] sm:text-xs md:text-sm text-gray-400 tracking-[0.5em] md:tracking-[1em] uppercase relative z-10 font-bold bg-black/40 inline-block px-2">
+                    <p className="text-[9px] sm:text-xs md:text-sm text-gray-400 tracking-[0.2em] sm:tracking-[0.5em] md:tracking-[1em] uppercase relative z-10 font-bold bg-black/40 inline-block px-2">
                         Software Developer // Full Stack
                     </p>
                 </motion.div>
@@ -51,9 +51,9 @@ export default function Hero() {
                 </div>
 
                 {/* CTA Buttons */}
-                <div className="flex flex-col md:flex-row gap-6 justify-center items-center mt-12">
-                    <button className="group relative px-6 py-3 bg-accent-NEON_GREEN/10 border border-accent-NEON_GREEN text-accent-NEON_GREEN font-bold uppercase tracking-widest hover:bg-accent-NEON_GREEN hover:text-black transition-all clip-path-polygon">
-                        <span className="flex items-center gap-2">
+                <div className="flex flex-col sm:flex-row gap-4 md:gap-6 justify-center items-center mt-12 w-full px-4">
+                    <button className="w-full sm:w-auto group relative px-6 py-3 bg-accent-NEON_GREEN/10 border border-accent-NEON_GREEN text-accent-NEON_GREEN font-bold uppercase tracking-widest hover:bg-accent-NEON_GREEN hover:text-black transition-all clip-path-polygon text-[10px] sm:text-xs md:text-sm">
+                        <span className="flex items-center justify-center gap-2">
                             <Terminal size={18} /> Execute.Projects()
                         </span>
                     </button>
@@ -61,9 +61,9 @@ export default function Hero() {
                         href="/assets/Resume_Anvaya_Arsha.pdf"
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="group relative px-6 py-3 border border-white/20 text-white font-bold uppercase tracking-widest hover:bg-white/10 transition-all cursor-pointer"
+                        className="w-full sm:w-auto group relative px-6 py-3 border border-white/20 text-white font-bold uppercase tracking-widest hover:bg-white/10 transition-all cursor-pointer text-[10px] sm:text-xs md:text-sm"
                     >
-                        <span className="flex items-center gap-2">
+                        <span className="flex items-center justify-center gap-2">
                             <Cpu size={18} /> View_Logs (Resume)
                         </span>
                     </a>
@@ -72,7 +72,7 @@ export default function Hero() {
             </div>
 
             {/* Decorative Footers */}
-            <div className="absolute bottom-10 w-full px-12 flex justify-between text-[10px] text-gray-600 uppercase tracking-widest">
+            <div className="hidden sm:flex absolute bottom-10 w-full px-12 justify-between text-[10px] text-gray-600 uppercase tracking-widest">
                 <div>Coordinates: 23.3441° N, 85.3096° E</div>
                 <div>Memory: 64TB / 128TB</div>
             </div>

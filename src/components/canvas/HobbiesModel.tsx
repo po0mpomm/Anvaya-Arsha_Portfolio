@@ -24,7 +24,7 @@ const HobbiesModel = ({
         <div className="w-full h-full">
             <Canvas
                 shadows
-                dpr={[1, 2]}
+                dpr={[1, 1.5]}
                 camera={{ fov: 45 }}
                 frameloop={active ? "always" : "never"}
             >
