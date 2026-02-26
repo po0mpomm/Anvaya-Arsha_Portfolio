@@ -47,48 +47,34 @@ export default function MusicPlayer() {
         setIsPlaying(false);
     };
 
+    // Apply Volume Changes
+    useEffect(() => {
+        if (audioRef.current) {
+            audioRef.current.volume = volume;
+        }
+    }, [volume]);
+
     // Autoplay Logic - Standardized
     useEffect(() => {
         const audio = audioRef.current;
         if (!audio) return;
-        audio.volume = volume;
-
-        const checkInterval = setInterval(() => {
-            if (userPausedRef.current) return;
-            if (!audio.paused && audio.muted && hasInteractedRef.current) audio.muted = false;
-        }, 1000);
-
-        const handleInteraction = () => {
-            hasInteractedRef.current = true;
-            if (userPausedRef.current) return;
-            if (!audio.paused && audio.muted) audio.muted = false;
-            if (audio.volume !== volume) audio.volume = volume;
-            if (audio.paused) audio.play().catch(() => { });
-        };
 
         const onPlay = () => setIsPlaying(true);
         const onPause = () => setIsPlaying(false);
 
         audio.addEventListener("play", onPlay);
         audio.addEventListener("pause", onPause);
-        window.addEventListener("click", handleInteraction, { once: true });
-        window.addEventListener("scroll", handleInteraction, { once: true });
 
         // Preloader Signal
         const handleStartAudio = () => {
             userPausedRef.current = false;
-            if (hasInteractedRef.current) {
-                audio.muted = false;
-                audio.play().catch(() => { });
-            } else {
-                audio.muted = true;
-                audio.play().catch(() => { });
-            }
+            audio.muted = false;
+            setIsMuted(false);
+            audio.play().catch((err) => console.log("Audio play failed:", err));
         };
         window.addEventListener("START_AUDIO", handleStartAudio);
 
         return () => {
-            clearInterval(checkInterval);
             audio.removeEventListener("play", onPlay);
             audio.removeEventListener("pause", onPause);
             window.removeEventListener("START_AUDIO", handleStartAudio);
