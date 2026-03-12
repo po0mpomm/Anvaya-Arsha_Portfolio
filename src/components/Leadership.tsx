@@ -32,7 +32,7 @@ const items = [
 
 export default function Leadership() {
     return (
-        <section className="py-24 bg-black text-white border-t border-white/5">
+        <section className="py-24 bg-transparent text-white border-t border-white/5">
             <div className="container mx-auto px-6">
                 <h2 className="text-4xl font-bold mb-16 text-center uppercase tracking-widest">
                     <span className="text-accent-NEON_GREEN">sudo</span> list_achievements

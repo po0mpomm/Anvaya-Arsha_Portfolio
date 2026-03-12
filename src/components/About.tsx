@@ -2,18 +2,45 @@
 
 import { motion } from "framer-motion";
 
+// --- Cinematic Animation Variants ---
+const baseEasing = [0.16, 1, 0.3, 1] as const;
+
+const blurReveal = {
+    hidden: { opacity: 0, filter: "blur(10px)", y: 20 },
+    visible: {
+        opacity: 1,
+        filter: "blur(0px)",
+        y: 0,
+        transition: { duration: 1.2, ease: baseEasing }
+    }
+};
+
+const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+        opacity: 1,
+        transition: {
+            staggerChildren: 0.2,
+            delayChildren: 0.1
+        }
+    }
+};
+
 export default function About() {
     return (
         <section id="about" className="py-16 md:py-32 bg-transparent text-white relative border-b border-white/5">
             <div className="container mx-auto px-6">
-                <div className="grid md:grid-cols-2 gap-10 md:gap-16 items-start">
+                <motion.div 
+                    variants={containerVariants}
+                    initial="hidden"
+                    whileInView="visible"
+                    viewport={{ once: true, amount: 0.2 }}
+                    className="grid md:grid-cols-2 gap-10 md:gap-16 items-start"
+                >
 
                     {/* Terminal Window Graphic */}
                     <motion.div
-                        initial={{ opacity: 0, x: -50 }}
-                        whileInView={{ opacity: 1, x: 0 }}
-                        viewport={{ once: true }}
-                        transition={{ duration: 0.8 }}
+                        variants={blurReveal}
                         className="border border-white/20 bg-black rounded-lg overflow-hidden font-mono text-sm"
                     >
                         <div className="bg-white/10 p-2 flex gap-2 items-center">
@@ -34,12 +61,7 @@ export default function About() {
                     </motion.div>
 
                     {/* Visual Text */}
-                    <motion.div
-                        initial={{ opacity: 0, y: 30 }}
-                        whileInView={{ opacity: 1, y: 0 }}
-                        viewport={{ once: true }}
-                        transition={{ duration: 0.8, delay: 0.2 }}
-                    >
+                    <motion.div variants={blurReveal}>
                         <h2 className="text-4xl md:text-6xl font-black mb-8 text-white uppercase">
                             Refactoring <br />
                             <span className="text-accent-NEON_GREEN">Reality</span>
@@ -60,7 +82,7 @@ export default function About() {
                         </div>
                     </motion.div>
 
-                </div>
+                </motion.div>
             </div>
         </section>
     );

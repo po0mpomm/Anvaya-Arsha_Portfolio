@@ -22,6 +22,25 @@ const experiences = [
     }
 ];
 
+// --- Cinematic Animation Variants ---
+const baseEasing = [0.16, 1, 0.3, 1] as const;
+
+const cardReveal = {
+    hidden: (index: number) => ({
+        opacity: 0,
+        filter: "blur(10px)",
+        x: index % 2 === 0 ? 50 : -50,
+        scale: 0.95
+    }),
+    visible: {
+        opacity: 1,
+        filter: "blur(0px)",
+        x: 0,
+        scale: 1,
+        transition: { duration: 1.2, ease: baseEasing }
+    }
+};
+
 export default function Experience() {
     return (
         <section id="experience" className="py-12 md:py-24 bg-transparent text-white border-b border-white/5 relative overflow-hidden">
@@ -29,14 +48,26 @@ export default function Experience() {
             <div className="absolute inset-0 bg-[linear-gradient(rgba(0,255,65,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(0,255,65,0.03)_1px,transparent_1px)] bg-[size:24px_24px] pointer-events-none" />
 
             <div className="container mx-auto px-6 relative z-10">
-                <h2 className="text-4xl font-bold mb-16 text-center uppercase tracking-widest text-white flex justify-center items-center gap-4">
+                <motion.h2 
+                    initial={{ opacity: 0, filter: "blur(10px)", y: 20 }}
+                    whileInView={{ opacity: 1, filter: "blur(0px)", y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 1.2, ease: baseEasing }}
+                    className="text-4xl font-bold mb-16 text-center uppercase tracking-widest text-white flex justify-center items-center gap-4"
+                >
                     <Terminal className="text-accent-NEON_GREEN" />
                     <span className="text-accent-NEON_GREEN">/</span> Execution_Log
-                </h2>
+                </motion.h2>
 
                 <div className="relative max-w-4xl mx-auto space-y-8">
                     {/* Vertical Connecting Line */}
-                    <div className="absolute left-4 md:left-[50%] top-0 bottom-0 w-[1px] bg-white/10 hidden md:block" />
+                    <motion.div 
+                        initial={{ height: 0 }}
+                        whileInView={{ height: "100%" }}
+                        viewport={{ once: true }}
+                        transition={{ duration: 1.5, ease: baseEasing }}
+                        className="absolute left-4 md:left-[50%] top-0 w-[1px] bg-white/10 hidden md:block origin-top" 
+                    />
 
                     {experiences.map((exp, index) => (
                         <div
@@ -44,16 +75,24 @@ export default function Experience() {
                             className={`flex flex-col md:flex-row gap-8 items-center ${index % 2 === 0 ? "md:flex-row-reverse" : ""}`}
                         >
                             {/* Timeline Node */}
-                            <div className="absolute left-4 md:left-[50%] w-3 h-3 bg-black border border-accent-NEON_GREEN transform md:-translate-x-1.5 hidden md:block">
+                            <motion.div 
+                                initial={{ scale: 0, opacity: 0 }}
+                                whileInView={{ scale: 1, opacity: 1 }}
+                                viewport={{ once: true }}
+                                transition={{ duration: 0.8, delay: index * 0.2 + 0.3, ease: baseEasing }}
+                                className="absolute left-4 md:left-[50%] w-3 h-3 bg-black border border-accent-NEON_GREEN transform md:-translate-x-1.5 hidden md:block"
+                            >
                                 <div className="absolute inset-0 bg-accent-NEON_GREEN opacity-50 animate-ping" />
-                            </div>
+                            </motion.div>
 
                             {/* Card */}
                             <motion.div
-                                initial={{ opacity: 0, x: index % 2 === 0 ? 50 : -50 }}
-                                whileInView={{ opacity: 1, x: 0 }}
+                                custom={index}
+                                variants={cardReveal}
+                                initial="hidden"
+                                whileInView="visible"
                                 viewport={{ once: true }}
-                                transition={{ duration: 0.6, delay: index * 0.2 }}
+                                transition={{ delay: index * 0.2 }}
                                 className="w-full md:w-[calc(50%-2rem)] group"
                             >
                                 <div className="relative border border-white/10 bg-black/40 backdrop-blur-sm hover:border-accent-NEON_GREEN/50 transition-all duration-300 p-4 md:p-6 overflow-hidden">

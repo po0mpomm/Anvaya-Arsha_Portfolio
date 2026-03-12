@@ -5,53 +5,96 @@ import dynamic from "next/dynamic";
 import { TypewriterEffect } from "@/components/ui/Typewriter"; // Placeholder, will inline if simple
 import { Terminal, Cpu, ShieldCheck } from "lucide-react";
 
+// --- Cinematic Animation Variants ---
+const baseEasing = [0.16, 1, 0.3, 1] as const; // Explicitly cast to satisfy Framer Motion type
+
+const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+        opacity: 1,
+        transition: {
+            staggerChildren: 0.15,
+            delayChildren: 0.2, // Initial dramatic pause
+        }
+    }
+};
+
+const blurReveal = {
+    hidden: { opacity: 0, filter: "blur(10px)", y: 20 },
+    visible: {
+        opacity: 1,
+        filter: "blur(0px)",
+        y: 0,
+        transition: { duration: 1.2, ease: baseEasing }
+    }
+};
+
+const subtleScale = {
+    hidden: { opacity: 0, scale: 0.95 },
+    visible: {
+        opacity: 1,
+        scale: 1,
+        transition: { duration: 2, ease: baseEasing } // Slow, dramatic scale
+    }
+};
+
 export default function Hero() {
     return (
         <section className="relative h-screen w-full overflow-x-hidden overflow-y-visible z-20 flex flex-col items-center justify-center bg-transparent">
 
-
             {/* HUD Overlay */}
-            <div className="absolute top-24 left-6 md:left-12 flex flex-col gap-2 opacity-50 pointer-events-none">
+            <motion.div 
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 0.5 }}
+                transition={{ duration: 2, delay: 1 }}
+                className="absolute top-24 left-6 md:left-12 flex flex-col gap-2 pointer-events-none"
+            >
                 <div className="text-xs text-accent-CYBER_CYAN">SYS.STATUS: ONLINE</div>
                 <div className="text-xs text-accent-CYBER_CYAN">KERNEL: v4.2.0</div>
                 <div className="text-xs text-accent-CYBER_CYAN">SECURE_CONNECTION: ESTABLISHED</div>
-            </div>
+            </motion.div>
 
             {/* Content Overlay */}
-            <div className="relative z-10 w-full max-w-5xl px-6 text-center select-none">
+            <motion.div 
+                variants={containerVariants}
+                initial="hidden"
+                animate="visible"
+                className="relative z-10 w-full max-w-5xl px-6 text-center select-none"
+            >
 
-                {/* Glitch Title */}
-                <motion.div
-                    initial={{ opacity: 0, scale: 0.9 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    transition={{ duration: 0.5, ease: "easeInOut" }}
-                    className="mb-8 relative"
-                >
-                    <div className="absolute inset-0 bg-black/60 blur-xl -z-10 rounded-full scale-110" />
+                {/* Ambient Glow */}
+                <motion.div variants={subtleScale} className="absolute inset-0 bg-black/60 blur-xl -z-10 rounded-full scale-110" />
 
-                    <div className="inline-block border border-accent-NEON_GREEN/30 bg-black/80 backdrop-blur-md px-3 py-1 mb-4 md:mb-6">
+                {/* Glitch Title Container */}
+                <div className="mb-8 relative">
+                    <motion.div variants={blurReveal} className="inline-block border border-accent-NEON_GREEN/30 bg-black/80 backdrop-blur-md px-3 py-1 mb-4 md:mb-6">
                         <span className="text-[10px] md:text-xs font-bold text-accent-NEON_GREEN tracking-widest animate-pulse">
                             ● SYSTEM ONLINE
                         </span>
-                    </div>
+                    </motion.div>
 
-                    <h1 className="text-4xl sm:text-5xl md:text-8xl font-black text-white tracking-tighter mb-4 md:mb-2 relative z-10 drop-shadow-[0_0_15px_rgba(0,255,65,0.5)] leading-tight">
+                    <motion.h1 
+                        variants={blurReveal}
+                        className="text-4xl sm:text-5xl md:text-8xl font-black text-white tracking-tighter mb-4 md:mb-2 relative z-10 drop-shadow-[0_0_15px_rgba(0,255,65,0.5)] leading-tight"
+                    >
                         ANVAYA<br className="sm:hidden" /><span className="text-accent-NEON_GREEN">_ARSHA</span>
-                    </h1>
-                    <p className="text-[9px] sm:text-xs md:text-sm text-gray-400 tracking-[0.2em] sm:tracking-[0.5em] md:tracking-[1em] uppercase relative z-10 font-bold bg-black/40 inline-block px-2">
+                    </motion.h1>
+                    
+                    <motion.p variants={blurReveal} className="text-[9px] sm:text-xs md:text-sm text-gray-400 tracking-[0.2em] sm:tracking-[0.5em] md:tracking-[1em] uppercase relative z-10 font-bold bg-black/40 inline-block px-2">
                         Software Developer // Full Stack
-                    </p>
-                </motion.div>
+                    </motion.p>
+                </div>
 
                 {/* Console Output Role */}
-                <div className="h-16 flex justify-center items-center text-accent-CYBER_CYAN font-bold text-sm sm:text-lg md:text-2xl text-center px-4">
+                <motion.div variants={blurReveal} className="h-16 flex justify-center items-center text-accent-CYBER_CYAN font-bold text-sm sm:text-lg md:text-2xl text-center px-4">
                     <span className="mr-2 hidden sm:inline">{">"}</span>
                     FULL_STACK_DEVELOPER | UI/UX_ENGINEER
                     <span className="w-2 h-4 md:w-3 md:h-6 bg-accent-CYBER_CYAN ml-2 animate-pulse" />
-                </div>
+                </motion.div>
 
                 {/* CTA Buttons */}
-                <div className="flex flex-col sm:flex-row gap-4 md:gap-6 justify-center items-center mt-12 w-full px-4">
+                <motion.div variants={blurReveal} className="flex flex-col sm:flex-row gap-4 md:gap-6 justify-center items-center mt-12 w-full px-4">
+
                     <button className="w-full sm:w-auto group relative px-6 py-3 bg-accent-NEON_GREEN/10 border border-accent-NEON_GREEN text-accent-NEON_GREEN font-bold uppercase tracking-widest hover:bg-accent-NEON_GREEN hover:text-black transition-all clip-path-polygon text-[10px] sm:text-xs md:text-sm">
                         <span className="flex items-center justify-center gap-2">
                             <Terminal size={18} /> Execute.Projects()
@@ -67,9 +110,9 @@ export default function Hero() {
                             <Cpu size={18} /> View_Logs (Resume)
                         </span>
                     </a>
-                </div>
+                </motion.div>
 
-            </div>
+            </motion.div>
 
             {/* Decorative Footers */}
             <div className="hidden sm:flex absolute bottom-10 w-full px-12 justify-between text-[10px] text-gray-600 uppercase tracking-widest">

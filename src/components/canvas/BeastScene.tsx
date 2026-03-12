@@ -19,23 +19,20 @@ function ScrollHelmet() {
     }, []);
 
     // --- DESKTOP TRANSFORMS ---
-    const scaleDesktop = useTransform(scrollY, [0, 800, 2600, 3400, 4200], [2.8, 1.2, 1.2, 1.0, 1.0]);
-    const xDesktop = useTransform(scrollY, [0, 800, 3600, 4100], [0, 3.5, 3.5, -3.5]);
+    const scaleDesktop = useTransform(scrollY, [0, 800, 2600, 3400, 4800], [2.8, 1.2, 1.2, 1.0, 0.8]);
+    const xDesktop = useTransform(scrollY, [0, 800, 3600, 4800], [0, 3.5, 3.5, -3.5]);
 
     // --- MOBILE TRANSFORMS ---
-    // Smaller scale, tighter X bounds to stay in viewport
-    const scaleMobile = useTransform(scrollY, [0, 800, 2600, 3400, 4200], [1.8, 0.9, 0.9, 0.8, 0.8]);
-
-    // Added drift: 1.2 -> 0.8 during the long text sections so it doesn't look "stuck"
-    const xMobile = useTransform(scrollY, [0, 800, 3600, 4100], [0, 1.2, 0.8, -1.2]);
+    const scaleMobile = useTransform(scrollY, [0, 800, 2600, 3400, 4800], [1.8, 0.9, 0.9, 0.8, 0.7]);
+    const xMobile = useTransform(scrollY, [0, 800, 3600, 4800], [0, 1.2, 0.8, -1.2]);
 
 
-    // Position Y (Shared logic essentially, but maybe adjusted if needed)
-    const y = useTransform(scrollY, [0, 4200, 6200], [0, 0, 10]);
+    // Position Y - Fine-tuned to stop even earlier
+    const y = useTransform(scrollY, [0, 4800, 6800], [0, 0, 10]);
 
-    // Rotation
-    const rotateX = useTransform(scrollY, [0, 800, 3400, 4200], [0.2, 0.5, 0.2, 0.4]);
-    const rotateY = useTransform(scrollY, [0, 3400, 4200], [0, -Math.PI * 2, -Math.PI * 4]);
+    // Rotation - Adjusted duration
+    const rotateX = useTransform(scrollY, [0, 800, 3400, 4800], [0.2, 0.5, 0.2, 0.4]);
+    const rotateY = useTransform(scrollY, [0, 3400, 4800], [0, -Math.PI * 2, -Math.PI * 4]);
 
     const groupRef = useRef<THREE.Group>(null);
 
