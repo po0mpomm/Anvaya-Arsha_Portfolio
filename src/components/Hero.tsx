@@ -88,7 +88,7 @@ export default function Hero() {
                 {/* Console Output Role */}
                 <motion.div variants={blurReveal} className="h-16 flex justify-center items-center text-accent-CYBER_CYAN font-bold text-sm sm:text-lg md:text-2xl text-center px-4">
                     <span className="mr-2 hidden sm:inline">{">"}</span>
-                    AI_ML_ENGINEER | UI/UX_ENGINEER
+                    AI_ML_ENGINEER | UI/UX_DEVELOPER
                     <span className="w-2 h-4 md:w-3 md:h-6 bg-accent-CYBER_CYAN ml-2 animate-pulse" />
                 </motion.div>
 
