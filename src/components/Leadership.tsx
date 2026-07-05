@@ -8,25 +8,25 @@ const items = [
         icon: <Users size={24} />,
         title: "Head_of_Design",
         context: "VITronix Club",
-        description: "Led 6 designers. Managed UI/UX for campus events."
+        description: "Directed UI/UX initiatives, led a team of 6 designers, and delivered event-focused digital assets."
     },
     {
         icon: <Users size={24} />,
         title: "Core_Member",
         context: "Sports Club",
-        description: "Organized 5+ tournaments. 200+ participants logistics."
+        description: "Organized 10+ tournaments with 800+ participants, managing end-to-end logistics and coordination."
     },
     {
         icon: <Award size={24} />,
         title: "Summer_of_Bitcoin",
-        context: "2025 Proposal",
-        description: "Advanced to Proposal Round. Graphic & Analytical skills."
+        context: "2025 & 2026",
+        description: "Selected for the Proposal Round after clearing 4 global stages. Recognized for open-source research and problem-solving."
     },
     {
         icon: <Award size={24} />,
         title: "Silver_Medalist",
         context: "Aarambh Cricket",
-        description: "Represented VIT Bhopal. Team Strategy & Execution."
+        description: "Represented VIT Bhopal. Team Strategy & Execution. Batting Allrounder."
     },
 ];
 

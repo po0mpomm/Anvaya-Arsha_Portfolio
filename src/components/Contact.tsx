@@ -78,15 +78,18 @@ export default function Contact() {
                 </motion.div>
 
                 {/* CENTRAL 3D MODEL */}
-                <div className="relative w-full h-[400px] md:h-[600px] lg:h-[900px] flex justify-center items-center mt-8 md:-mt-40 mb-8 md:-mb-40">
-                    <motion.div
-                        variants={slowScale}
-                        className="w-full h-full absolute inset-0 z-10"
-                    >
-                        <SplineScene />
-                        {/* Mask to hide Spline Logo - Maximized coverage to completely hide watermark */}
-                        <div className="absolute bottom-0 right-0 w-36 h-12 md:w-56 md:h-16 bg-black z-[9999] pointer-events-none" />
-                    </motion.div>
+                <div className="relative w-full h-[400px] md:h-[600px] lg:h-[900px] flex justify-center items-center mt-8 md:-mt-40 mb-8 md:-mb-40 overflow-hidden">
+                    {/* Fixed aspect ratio wrapper scaled via CSS to ensure model doesn't crop or drift on mobile */}
+                    <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-10 origin-center w-[1000px] h-[750px] scale-[0.55] sm:scale-[0.7] md:scale-[0.85] lg:scale-100 xl:scale-[1.2]">
+                        <motion.div
+                            variants={slowScale}
+                            className="w-full h-full relative"
+                        >
+                            <SplineScene />
+                            {/* Mask to hide Spline Logo - Maximized coverage to completely hide watermark */}
+                            <div className="absolute -bottom-6 -right-6 w-56 h-24 md:w-80 md:h-32 bg-black z-[9999] pointer-events-none" />
+                        </motion.div>
+                    </div>
 
                     {/* Left Links */}
                     <motion.div variants={dramaticReveal} className="hidden sm:flex absolute left-0 top-1/2 -translate-y-1/2 flex-col gap-4 md:gap-6 text-xs md:text-sm font-bold tracking-widest text-gray-400 z-20">
@@ -140,7 +143,7 @@ export default function Contact() {
                     href="mailto:anvayaarsha2003@gmail.com"
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
-                    className="relative z-30 px-10 py-5 bg-accent-NEON_GREEN text-black font-black uppercase tracking-widest text-sm md:text-base mb-12 flex items-center gap-2 hover:bg-white transition-colors"
+                    className="relative z-30 md:mt-16 px-10 py-5 bg-accent-NEON_GREEN text-black font-black uppercase tracking-widest text-sm md:text-base mb-12 flex items-center gap-2 hover:bg-white transition-colors"
                 >
                     INITIATE_CONTACT <ArrowRight size={18} />
                 </motion.a>

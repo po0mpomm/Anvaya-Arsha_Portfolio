@@ -4,11 +4,19 @@ import { useState, useRef, useEffect } from "react";
 import { motion, useScroll, useMotionValueEvent, AnimatePresence } from "framer-motion";
 import { Play, Pause, Volume2, X, Disc, Maximize2, SkipForward, SkipBack, Music, Activity } from "lucide-react";
 
+const PLAYLIST = [
+    { title: "Headlights", artist: "ALOK_&_ALAN", src: "/audio/headlights.mp3" },
+    { title: "On My Way", artist: "ALAN_WALKER", src: "/audio/on-my-way.mp3" },
+    { title: "Sunflower", artist: "POST_MALONE", src: "/audio/sunflower.mp3" }
+];
+
 export default function MusicPlayer() {
+    const [currentTrack, setCurrentTrack] = useState(0);
     const [isPlaying, setIsPlaying] = useState(false);
     const [isMuted, setIsMuted] = useState(false);
     const [isMinimized, setIsMinimized] = useState(false);
-    const [volume, setVolume] = useState(0.5);
+    const [showPlaylist, setShowPlaylist] = useState(false);
+    const [volume, setVolume] = useState(0.4);
     const [hasError, setHasError] = useState(false);
     const audioRef = useRef<HTMLAudioElement | null>(null);
     const userPausedRef = useRef(false);
@@ -38,7 +46,8 @@ export default function MusicPlayer() {
     const handleVolumeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const newVolume = parseFloat(e.target.value);
         setVolume(newVolume);
-        if (audioRef.current) audioRef.current.volume = newVolume;
+        // Exponential volume curve for more natural human hearing perception
+        if (audioRef.current) audioRef.current.volume = Math.pow(newVolume, 2);
         setIsMuted(newVolume === 0);
     };
 
@@ -47,10 +56,53 @@ export default function MusicPlayer() {
         setIsPlaying(false);
     };
 
+    const nextTrack = (e?: React.MouseEvent | boolean) => {
+        if (typeof e !== 'boolean' && e) e.stopPropagation();
+        const forcePlay = e === true;
+        const wasPlaying = isPlaying || forcePlay;
+        setCurrentTrack((prev) => (prev + 1) % PLAYLIST.length);
+        setHasError(false);
+        if (wasPlaying) {
+            setTimeout(() => {
+                if (audioRef.current) {
+                    audioRef.current.play().catch(console.error);
+                    setIsPlaying(true);
+                }
+            }, 50);
+        }
+    };
+
+    const prevTrack = (e?: React.MouseEvent) => {
+        if (e) e.stopPropagation();
+        const wasPlaying = isPlaying;
+        setCurrentTrack((prev) => (prev - 1 + PLAYLIST.length) % PLAYLIST.length);
+        setHasError(false);
+        if (wasPlaying) {
+            setTimeout(() => {
+                if (audioRef.current) {
+                    audioRef.current.play().catch(console.error);
+                    setIsPlaying(true);
+                }
+            }, 50);
+        }
+    };
+
+    // We no longer need the generic currentTrack useEffect for auto-play since it's handled in nextTrack/prevTrack
+
+    const selectTrack = (index: number, e?: React.MouseEvent) => {
+        if (e) e.stopPropagation();
+        setCurrentTrack(index);
+        setHasError(false);
+        setIsPlaying(true);
+        setShowPlaylist(false);
+    };
+
+    // Remove the old currentTrack auto-play effect here
+
     // Apply Volume Changes
     useEffect(() => {
         if (audioRef.current) {
-            audioRef.current.volume = volume;
+            audioRef.current.volume = Math.pow(volume, 2);
         }
     }, [volume]);
 
@@ -98,7 +150,47 @@ export default function MusicPlayer() {
             }}
             className="fixed bottom-4 right-4 sm:bottom-6 sm:right-6 md:bottom-10 md:right-10 z-[60] flex justify-end"
         >
-            <audio ref={audioRef} src="/audio/on-my-way.mp3" loop playsInline onError={handleError} />
+            <audio 
+                ref={audioRef} 
+                src={PLAYLIST[currentTrack].src} 
+                playsInline 
+                onError={handleError} 
+                onEnded={() => nextTrack(true)}
+            />
+
+            {/* PLAYLIST POPUP */}
+            <AnimatePresence>
+                {showPlaylist && !isMinimized && (
+                    <motion.div
+                        initial={{ opacity: 0, y: 10, scale: 0.95 }}
+                        animate={{ opacity: 1, y: 0, scale: 1 }}
+                        exit={{ opacity: 0, y: 10, scale: 0.95 }}
+                        className="absolute bottom-full right-0 mb-4 w-64 bg-black/95 border border-accent-NEON_GREEN/30 shadow-[0_0_30px_rgba(0,255,65,0.15)] backdrop-blur-xl z-[70] rounded-sm overflow-hidden"
+                    >
+                        <div className="p-3 border-b border-white/10 flex justify-between items-center bg-accent-NEON_GREEN/5">
+                            <div className="flex items-center gap-2">
+                                <Music size={12} className="text-accent-NEON_GREEN" />
+                                <span className="text-accent-NEON_GREEN text-xs font-bold tracking-widest uppercase">SYS.PLAYLIST</span>
+                            </div>
+                            <button onClick={(e) => { e.stopPropagation(); setShowPlaylist(false); }} className="text-white/50 hover:text-red-400 transition-colors">
+                                <X size={14} />
+                            </button>
+                        </div>
+                        <div className="flex flex-col p-1 max-h-48 overflow-y-auto custom-scrollbar">
+                            {PLAYLIST.map((track, idx) => (
+                                <button
+                                    key={idx}
+                                    onClick={(e) => selectTrack(idx, e)}
+                                    className={`flex flex-col text-left p-2 hover:bg-white/10 transition-colors border-l-2 ${currentTrack === idx ? 'border-accent-NEON_GREEN bg-accent-NEON_GREEN/10' : 'border-transparent'}`}
+                                >
+                                    <span className={`text-xs font-bold uppercase ${currentTrack === idx ? 'text-accent-NEON_GREEN' : 'text-white'}`}>{track.title}</span>
+                                    <span className="text-[10px] text-white/50 font-mono mt-0.5">{track.artist}</span>
+                                </button>
+                            ))}
+                        </div>
+                    </motion.div>
+                )}
+            </AnimatePresence>
 
             {/* FUTURISTIC HUD CONTAINER */}
             <motion.div
@@ -211,10 +303,14 @@ export default function MusicPlayer() {
                             >
                                 {/* Track Info */}
                                 <div className="flex flex-col mb-1 sm:mb-3">
-                                    <h3 className="text-white font-bold text-xs sm:text-sm tracking-widest uppercase truncate max-w-[124px] sm:max-w-[140px] drop-shadow-[0_0_5px_rgba(255,255,255,0.5)]">On My Way</h3>
+                                    <h3 className="text-white font-bold text-xs sm:text-sm tracking-widest uppercase truncate max-w-[124px] sm:max-w-[140px] drop-shadow-[0_0_5px_rgba(255,255,255,0.5)]">
+                                        {PLAYLIST[currentTrack].title}
+                                    </h3>
                                     <div className="flex items-center gap-1.5 sm:gap-2 mt-0.5">
                                         <div className="px-1 py-[1px] bg-accent-NEON_GREEN/20 border border-accent-NEON_GREEN/30 text-[7px] sm:text-[8px] text-accent-NEON_GREEN rounded-[2px]">MP3</div>
-                                        <p className="text-white/40 text-[9px] sm:text-[10px] font-mono tracking-wider truncate">ALAN_WALKER</p>
+                                        <p className="text-white/40 text-[9px] sm:text-[10px] font-mono tracking-wider truncate">
+                                            {PLAYLIST[currentTrack].artist}
+                                        </p>
                                     </div>
                                 </div>
 
@@ -251,13 +347,26 @@ export default function MusicPlayer() {
                                     </div>
 
                                     {/* Action Buttons */}
-                                    <div className="flex gap-1.5 sm:gap-2">
+                                    <div className="flex gap-1.5 sm:gap-2 items-center">
+                                        <button onClick={prevTrack} className="text-white/70 hover:text-white transition-colors">
+                                            <SkipBack size={10} className="w-2 h-2 sm:w-[10px] sm:h-[10px]" />
+                                        </button>
                                         <button onClick={togglePlay} className="text-white hover:text-accent-NEON_GREEN transition-colors flex items-center justify-center w-5 h-5 sm:w-6 sm:h-6 border border-white/10 rounded-sm hover:border-accent-NEON_GREEN/50 bg-white/5">
                                             {isPlaying ? <Pause size={10} className="w-2 h-2 sm:w-[10px] sm:h-[10px]" /> : <Play size={10} className="w-2 h-2 sm:w-[10px] sm:h-[10px]" />}
                                         </button>
+                                        <button onClick={nextTrack} className="text-white/70 hover:text-white transition-colors">
+                                            <SkipForward size={10} className="w-2 h-2 sm:w-[10px] sm:h-[10px]" />
+                                        </button>
+                                        <button 
+                                            onClick={(e) => { e.stopPropagation(); setShowPlaylist(!showPlaylist); }} 
+                                            className={`flex items-center gap-1.5 px-2 py-1 ml-1 transition-all border rounded-sm ${showPlaylist ? 'bg-accent-NEON_GREEN/20 border-accent-NEON_GREEN text-accent-NEON_GREEN shadow-[0_0_10px_rgba(0,255,65,0.2)]' : 'bg-white/5 border-white/10 text-white/70 hover:text-accent-NEON_GREEN hover:border-accent-NEON_GREEN/50 hover:bg-white/10'}`}
+                                        >
+                                            <Music size={10} className="w-2.5 h-2.5 sm:w-3 sm:h-3" />
+                                            <span className="text-[8px] sm:text-[9px] font-bold tracking-widest uppercase hidden sm:block">Playlist</span>
+                                        </button>
                                         <button
-                                            onClick={(e) => { e.stopPropagation(); setIsMinimized(true); }}
-                                            className="text-white/40 hover:text-red-400 transition-colors w-5 h-5 sm:w-6 sm:h-6 flex items-center justify-center"
+                                            onClick={(e) => { e.stopPropagation(); setIsMinimized(true); setShowPlaylist(false); }}
+                                            className="text-white/40 hover:text-red-400 transition-colors w-5 h-5 sm:w-6 sm:h-6 flex items-center justify-center ml-1"
                                         >
                                             <X size={12} className="w-2.5 h-2.5 sm:w-3 sm:h-3" />
                                         </button>

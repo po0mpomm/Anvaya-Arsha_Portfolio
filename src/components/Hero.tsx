@@ -101,9 +101,8 @@ export default function Hero() {
                         </span>
                     </button>
                     <a
-                        href="/assets/Resume_Anvaya_Arsha.pdf"
-                        target="_blank"
-                        rel="noopener noreferrer"
+                        href="/assets/Anvaya_Arsha_Resume_.pdf"
+                        download="Anvaya_Arsha_Resume_.pdf"
                         className="w-full sm:w-auto group relative px-6 py-3 border border-white/20 text-white font-bold uppercase tracking-widest hover:bg-white/10 transition-all cursor-pointer text-[10px] sm:text-xs md:text-sm"
                     >
                         <span className="flex items-center justify-center gap-2">
@@ -114,11 +113,6 @@ export default function Hero() {
 
             </motion.div>
 
-            {/* Decorative Footers */}
-            <div className="hidden sm:flex absolute bottom-10 w-full px-12 justify-between text-[10px] text-gray-600 uppercase tracking-widest">
-                <div>Coordinates: 23.3441° N, 85.3096° E</div>
-                <div>Memory: 64TB / 128TB</div>
-            </div>
         </section>
     );
 }

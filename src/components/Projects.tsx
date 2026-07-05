@@ -171,11 +171,35 @@ function DesignerProjectCard({ project, index }: { project: typeof designerProje
 
 const developerProjects = [
     {
+        title: "BABYBLOOM_ASSISTANT",
+        tags: "[AI, Healthcare, Agent]",
+        description: "Intelligent AI assistant for maternal and infant care guidance.",
+        status: "NEW",
+        github: "https://github.com/po0mpomm/BabyBloom-Assistant",
+        demo: "#"
+    },
+    {
         title: "DWELLO_AI",
         tags: "[n8n, Real-Estate, AI_Agent]",
         description: "Intelligent Real Estate AI Agent powered by n8n. Automating lead generation and property matching.",
-        status: "NEW",
+        status: "ACTIVE",
         github: "https://github.com/po0mpomm/Real-estate-n8n-Agent",
+        demo: "#"
+    },
+    {
+        title: "UPTIME_MONITOR",
+        tags: "[Backend, Monitoring, API]",
+        description: "Robust service monitoring architecture to track uptime, track latency, and trigger downtime alerts.",
+        status: "DEPLOYED",
+        github: "https://github.com/po0mpomm/Uptime_Monitor",
+        demo: "#"
+    },
+    {
+        title: "LEGAL_AI_ASSISTANT",
+        tags: "[AI, NLP, LegalTech]",
+        description: "Intelligent AI assistant designed for legal document analysis and automated case research.",
+        status: "NEW",
+        github: "https://github.com/po0mpomm/Legal-AI-Assistant",
         demo: "#"
     },
     {

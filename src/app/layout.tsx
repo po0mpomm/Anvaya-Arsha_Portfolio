@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import { JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 import SmoothScroll from "@/components/SmoothScroll";
-import FlowingBackground from "@/components/FlowingBackground";
 
 import Preloader from "@/components/Preloader";
 import MusicPlayer from "@/components/MusicPlayer";
@@ -26,11 +25,10 @@ export default function RootLayout({
   return (
     <html lang="en" className="dark" suppressHydrationWarning>
       <body
-        className={`${jetbrainsMono.variable} font-mono antialiased text-white selection:bg-[#00FF41] selection:text-black overflow-x-hidden`}
+        className={`${jetbrainsMono.variable} font-mono antialiased text-white selection:bg-[#00FF41] selection:text-black overflow-x-hidden bg-black`}
         style={{ color: "#00FF41", minHeight: '100vh' }}
       >
         <Preloader />
-        <FlowingBackground />
         <SmoothScroll>{children}</SmoothScroll>
         <MusicPlayer />
       </body>

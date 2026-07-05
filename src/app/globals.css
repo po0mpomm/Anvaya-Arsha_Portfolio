@@ -90,3 +90,15 @@ body::before {
   pointer-events: none;
   opacity: 0.15;
 }
+
+/* CareerMap particle pulse animation */
+@keyframes particlePulse {
+  from {
+    opacity: 0.04;
+    transform: scale(1);
+  }
+  to {
+    opacity: 0.28;
+    transform: scale(2);
+  }
+}

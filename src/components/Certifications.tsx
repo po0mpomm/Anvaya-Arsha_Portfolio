@@ -6,13 +6,13 @@ import { useState } from "react";
 
 const certifications = [
     {
-        title: "Full Stack Developer MERN",
-        issuer: "SmartBridge Indonesia",
+        title: "Enterprise Gen AI",
+        issuer: "IBM",
         date: "Apr 2025",
-        id: "CC-FSD-2025-12750",
-        skills: ["MongoDB", "Express.js", "Node.js", "React.js"],
-        icon: <Layers className="text-orange-400" size={32} />,
-        link: "#" // Placeholder
+        id: "ae9dbf4b87...",
+        skills: ["AI Strategy", "Cloud Integration"],
+        icon: <Cpu className="text-blue-500" size={32} />,
+        link: "#"
     },
     {
         title: "GEN AI Specialist",
@@ -24,15 +24,6 @@ const certifications = [
         link: "#"
     },
     {
-        title: "Enterprise Gen AI",
-        issuer: "IBM",
-        date: "Apr 2025",
-        id: "ae9dbf4b87...",
-        skills: ["AI Strategy", "Cloud Integration"],
-        icon: <Cpu className="text-blue-500" size={32} />,
-        link: "#"
-    },
-    {
         title: "Applied Machine Learning",
         issuer: "University of Michigan",
         date: "Jan 2024",
@@ -40,6 +31,15 @@ const certifications = [
         skills: ["Python", "Machine Learning", "Data Science"],
         icon: <Database className="text-yellow-400" size={32} />,
         link: "#"
+    },
+    {
+        title: "Full Stack Developer MERN",
+        issuer: "SmartBridge Indonesia",
+        date: "Apr 2025",
+        id: "CC-FSD-2025-12750",
+        skills: ["MongoDB", "Express.js", "Node.js", "React.js"],
+        icon: <Layers className="text-orange-400" size={32} />,
+        link: "#" // Placeholder
     },
     {
         title: "C / C++ Programming",

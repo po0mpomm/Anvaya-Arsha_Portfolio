@@ -19,22 +19,33 @@ function ScrollHelmet() {
     }, []);
 
     // --- DESKTOP TRANSFORMS ---
-    const scaleDesktop = useTransform(scrollY, [0, 800, 2600, 3400, 4800], [2.8, 1.2, 1.2, 1.0, 0.8]);
-    const xDesktop = useTransform(scrollY, [0, 800, 3600, 4800], [0, 3.5, 3.5, -3.5]);
+    const scaleDesktop = useTransform(scrollY, [0, 800, 2600, 3800, 8100], [2.8, 1.3, 1.3, 1.15, 0.95]);
+    const xDesktop = useTransform(scrollY, [0, 800, 4200, 8100], [0, 3.5, 2.5, 2.5]);
 
     // --- MOBILE TRANSFORMS ---
-    const scaleMobile = useTransform(scrollY, [0, 800, 2600, 3400, 4800], [1.8, 0.9, 0.9, 0.8, 0.7]);
-    const xMobile = useTransform(scrollY, [0, 800, 3600, 4800], [0, 1.2, 0.8, -1.2]);
+    const scaleMobile = useTransform(scrollY, [0, 800, 2600, 3800, 8100], [1.8, 0.9, 0.9, 0.9, 0.8]);
+    const xMobile = useTransform(scrollY, [0, 800, 4200, 8100], [0, 1.2, 0.5, 0.5]);
 
+    // Position Y - Shift UP during the Career Map to align with the designated box
+    const y = useTransform(scrollY, [0, 800, 4200, 8100], [0, 0, 0.9, 0.9]);
 
-    // Position Y - Fine-tuned to stop even earlier
-    const y = useTransform(scrollY, [0, 4800, 6800], [0, 0, 10]);
-
-    // Rotation - Adjusted duration
-    const rotateX = useTransform(scrollY, [0, 800, 3400, 4800], [0.2, 0.5, 0.2, 0.4]);
-    const rotateY = useTransform(scrollY, [0, 3400, 4800], [0, -Math.PI * 2, -Math.PI * 4]);
+    // Rotation - Extended duration to match delay
+    const rotateX = useTransform(scrollY, [0, 800, 3800, 8100], [0.2, 0.5, 0.2, 0.4]);
+    const rotateY = useTransform(scrollY, [0, 3800, 8100], [0, -Math.PI * 2, -Math.PI * 4]);
 
     const groupRef = useRef<THREE.Group>(null);
+    const targetMouse = useRef({ x: 0, y: 0 });
+    const currentMouse = useRef({ x: 0, y: 0 });
+
+    useEffect(() => {
+        const handleMouseMove = (e: MouseEvent) => {
+            // Normalize to -1 to 1
+            targetMouse.current.x = (e.clientX / window.innerWidth) * 2 - 1;
+            targetMouse.current.y = -(e.clientY / window.innerHeight) * 2 + 1;
+        };
+        window.addEventListener('mousemove', handleMouseMove);
+        return () => window.removeEventListener('mousemove', handleMouseMove);
+    }, []);
 
     useFrame(() => {
         if (groupRef.current) {
@@ -42,10 +53,24 @@ function ScrollHelmet() {
             const currentX = isMobile ? xMobile.get() : xDesktop.get();
 
             groupRef.current.scale.setScalar(currentScale);
-            groupRef.current.position.x = currentX;
-            groupRef.current.position.y = y.get();
-            groupRef.current.rotation.x = rotateX.get();
-            groupRef.current.rotation.y = rotateY.get();
+            
+            if (!isMobile) {
+                // Smoothly interpolate mouse position (damped spring effect)
+                currentMouse.current.x = THREE.MathUtils.lerp(currentMouse.current.x, targetMouse.current.x, 0.05);
+                currentMouse.current.y = THREE.MathUtils.lerp(currentMouse.current.y, targetMouse.current.y, 0.05);
+
+                // Apply scroll transforms PLUS subtle mouse parallax
+                groupRef.current.position.x = currentX + currentMouse.current.x * 0.3;
+                groupRef.current.position.y = y.get() + currentMouse.current.y * 0.3;
+                
+                groupRef.current.rotation.x = rotateX.get() - currentMouse.current.y * 0.15;
+                groupRef.current.rotation.y = rotateY.get() + currentMouse.current.x * 0.25;
+            } else {
+                groupRef.current.position.x = currentX;
+                groupRef.current.position.y = y.get();
+                groupRef.current.rotation.x = rotateX.get();
+                groupRef.current.rotation.y = rotateY.get();
+            }
         }
     });
 
@@ -61,11 +86,12 @@ function ScrollHelmet() {
 export default function BeastScene() {
     const containerRef = useRef<HTMLDivElement>(null);
     const isInView = useInView(containerRef, { margin: "200px" });
+    const { scrollY } = useScroll();
 
     return (
         <motion.div ref={containerRef} className="w-full h-full absolute inset-0">
             <Canvas
-                className="w-full h-full pointer-events-auto"
+                className="w-full h-full pointer-events-none"
                 frameloop={isInView ? "always" : "never"}
                 dpr={[1, 1.5]} // Clamp pixel ratio for mobile performance
                 performance={{ min: 0.5 }}

@@ -61,9 +61,8 @@ export default function Navbar() {
                         </Link>
                     ))}
                     <a
-                        href="/assets/Resume_Anvaya_Arsha.pdf"
-                        target="_blank"
-                        rel="noopener noreferrer"
+                        href="/assets/Anvaya_Arsha_Resume_.pdf"
+                        download="Anvaya_Arsha_Resume_.pdf"
                         className="px-4 py-1 text-xs font-bold border border-accent-NEON_GREEN text-accent-NEON_GREEN hover:bg-accent-NEON_GREEN hover:text-black transition-colors uppercase"
                     >
                         [ Download_Resume ]
@@ -96,9 +95,8 @@ export default function Navbar() {
                         </Link>
                     ))}
                     <a
-                        href="/assets/Resume_Anvaya_Arsha.pdf"
-                        target="_blank"
-                        rel="noopener noreferrer"
+                        href="/assets/Anvaya_Arsha_Resume_.pdf"
+                        download="Anvaya_Arsha_Resume_.pdf"
                         className="px-6 py-3 text-sm font-bold border border-accent-NEON_GREEN text-accent-NEON_GREEN hover:bg-accent-NEON_GREEN hover:text-black transition-colors uppercase"
                     >
                         [ Download_Resume ]
